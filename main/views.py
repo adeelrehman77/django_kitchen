@@ -103,7 +103,7 @@ def subscribe(request):
                 sub.customer = profile
                 sub.save()
                 messages.success(request, 'Subscription created successfully!')
-                return redirect('profile')
+                return redirect('home')
         else:
             form = SubscriptionForm(user=request.user)
         return render(request, 'main/subscribe.html', {'form': form})
