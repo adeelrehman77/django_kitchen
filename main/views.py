@@ -148,17 +148,6 @@ def subscription_report(request):
                 ws.write(row_num, col_num, str(row[col_num]), font_style)
                 
         wb.save(response)
-                sub.customer.user.username,
-                sub.menu.name,
-                str(sub.time_slot),
-                sub.start_date,
-                sub.end_date,
-                sub.get_payment_mode_display(),
-                'Active' if sub.end_date >= today else 'Expired',
-                sub.deliverystatus_set.count(),
-                sub.deliverystatus_set.filter(status='pending').count(),
-                sub.deliverystatus_set.filter(status='delivered').count()
-            ])
         return response
         
     context = {
