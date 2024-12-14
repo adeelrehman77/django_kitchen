@@ -29,7 +29,7 @@ def register(request):
 class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription
-        fields = ['item', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
+        fields = ['menu', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
