@@ -45,40 +45,8 @@ class TimeSlotAdmin(admin.ModelAdmin):
         return obj.get_name_display()
     get_slot_name.short_description = 'Slot Name'
 
-from import_export import resources, fields
-from import_export.admin import ImportExportModelAdmin
-from django.contrib.auth.models import User
-
-class CustomerProfileResource(resources.ModelResource):
-    username = fields.Field(attribute='user', column_name='username')
-    zone_name = fields.Field(attribute='zone', column_name='zone')
-    route_name = fields.Field(attribute='route', column_name='route')
-
-    class Meta:
-        model = CustomerProfile
-        fields = ('username', 'phone', 'zone_name', 'route_name', 'building_name', 'floor_number', 'flat_number')
-        import_id_fields = ('username',)
-
-    def before_import_row(self, row, **kwargs):
-        username = row.get('username')
-        # Create user if doesn't exist
-        if not User.objects.filter(username=username).exists():
-            User.objects.create_user(username=username, password='temp123')
-
-    def get_instance(self, instance_loader, row):
-        try:
-            params = {}
-            for key in instance_loader.resource.get_import_id_fields():
-                field = instance_loader.resource.fields[key]
-                params[field.attribute] = field.clean(row)
-            if params:
-                return User.objects.get(username=params['user'])
-        except User.DoesNotExist:
-            return None
-
 @admin.register(CustomerProfile)
-class CustomerProfileAdmin(ImportExportModelAdmin):
-    resource_class = CustomerProfileResource
+class CustomerProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone', 'zone', 'route', 'building_name', 'active_subscription', 'get_subscription_stats', 'get_delivery_stats')
     list_filter = ('zone', 'route', 'subscription__payment_mode')
     search_fields = ('user__username', 'phone', 'building_name', 'flat_number')
