@@ -89,6 +89,9 @@ def profile(request):
 def menu_preview(request, menu_id):
     menu = MenuList.objects.get(id=menu_id)
     return render(request, 'main/menu_preview.html', {'menu': menu})
+from django.http import HttpResponse
+import csv
+
 def subscription_report(request):
     subscriptions = Subscription.objects.select_related(
         'customer', 'menu', 'time_slot'
@@ -105,6 +108,28 @@ def subscription_report(request):
         
     if payment_filter:
         subscriptions = subscriptions.filter(payment_mode=payment_filter)
+    
+    if request.GET.get('export') == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="subscriptions.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Customer', 'Menu', 'Time Slot', 'Start Date', 'End Date', 
+                        'Payment Mode', 'Status', 'Total Deliveries', 'Pending', 'Completed'])
+        
+        for sub in subscriptions:
+            writer.writerow([
+                sub.customer.user.username,
+                sub.menu.name,
+                str(sub.time_slot),
+                sub.start_date,
+                sub.end_date,
+                sub.get_payment_mode_display(),
+                'Active' if sub.end_date >= today else 'Expired',
+                sub.deliverystatus_set.count(),
+                sub.deliverystatus_set.filter(status='pending').count(),
+                sub.deliverystatus_set.filter(status='delivered').count()
+            ])
+        return response
         
     context = {
         'subscriptions': subscriptions,
