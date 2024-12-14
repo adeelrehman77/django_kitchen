@@ -9,10 +9,10 @@ from django import forms
 
 def home(request):
     try:
-        menu_lists = MenuList.objects.filter(is_active=True)
-        return render(request, 'main/home.html', {'menu_lists': menu_lists})
+        items = Item.objects.filter(is_active=True)
+        return render(request, 'main/home.html', {'items': items})
     except:
-        return render(request, 'main/home.html', {'menu_lists': []})
+        return render(request, 'main/home.html', {'items': []})
 
 def register(request):
     if request.method == 'POST':
