@@ -15,6 +15,11 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    if len(sys.argv) > 1 and sys.argv[1] == 'runserver':
+        if len(sys.argv) == 2:
+            sys.argv.append('0.0.0.0:8000')
+        elif len(sys.argv) == 3 and ':' not in sys.argv[2]:
+            sys.argv[2] = '0.0.0.0:' + sys.argv[2]
     execute_from_command_line(sys.argv)
 
 
