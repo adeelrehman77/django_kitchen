@@ -35,6 +35,7 @@ class Driver(models.Model):
     phone = models.CharField(max_length=15)
     license_number = models.CharField(max_length=50)
     assigned_route = models.ForeignKey(Route, on_delete=models.SET_NULL, null=True, blank=True)
+    assigned_zones = models.ManyToManyField(Zone)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
