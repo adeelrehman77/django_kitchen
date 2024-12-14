@@ -10,9 +10,26 @@ from django import forms
 def home(request):
     try:
         items = Item.objects.filter(is_active=True)
-        return render(request, 'main/home.html', {'items': items})
-    except:
-        return render(request, 'main/home.html', {'items': []})
+        categories = Category.objects.filter(is_active=True)
+        
+        # Category filter
+        category_id = request.GET.get('category')
+        if category_id:
+            items = items.filter(category_id=category_id)
+            
+        # Search functionality
+        search_query = request.GET.get('search')
+        if search_query:
+            items = items.filter(name__icontains=search_query)
+            
+        return render(request, 'main/home.html', {
+            'items': items,
+            'categories': categories,
+            'selected_category': category_id,
+            'search_query': search_query
+        })
+    except Exception as e:
+        return render(request, 'main/home.html', {'items': [], 'categories': []})
 
 def register(request):
     if request.method == 'POST':

@@ -2,22 +2,47 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>Fun Adventure Kitchen</h1>
-<div class="items-list">
-    {% for item in items %}
-    <div class="item-card">
-        {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
-        {% endif %}
-        <h2>{{ item.name }}</h2>
-        <p>{{ item.description }}</p>
-        <p class="price">AED {{ item.price }}</p>
-        {% if user.is_authenticated %}
-        <a href="{% url 'subscribe' %}?item={{ item.id }}" class="btn">Subscribe</a>
-        {% else %}
-        <a href="{% url 'login' %}" class="btn">Login to Subscribe</a>
-        {% endif %}
+<div class="home-container">
+    <h1>Fun Adventure Kitchen</h1>
+    
+    <!-- Search and Filter Section -->
+    <div class="search-filter">
+        <form method="GET" class="search-form">
+            <input type="text" name="search" placeholder="Search items..." value="{{ search_query|default:'' }}" class="search-input">
+            <select name="category" class="category-select">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if selected_category|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
     </div>
-    {% endfor %}
+
+    <!-- Items Grid -->
+    <div class="items-grid">
+        {% for item in items %}
+        <div class="item-card">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
+            {% endif %}
+            <h2>{{ item.name }}</h2>
+            <p class="item-category">{{ item.category.name }}</p>
+            <p class="item-description">{{ item.description }}</p>
+            <p class="item-price">AED {{ item.price }}</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'subscribe' %}?item={{ item.id }}" class="btn subscribe-btn">Subscribe</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn login-btn">Login to Subscribe</a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="no-items">
+            <p>No items found</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
