@@ -89,3 +89,6 @@ def profile(request):
 def menu_preview(request, menu_id):
     menu = MenuList.objects.get(id=menu_id)
     return render(request, 'main/menu_preview.html', {'menu': menu})
+def subscription_report(request):
+    all_subscriptions = Subscription.objects.select_related('customer', 'menu', 'time_slot').all()
+    return render(request, 'main/subscription_report.html', {'subscriptions': all_subscriptions})
