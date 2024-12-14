@@ -8,6 +8,22 @@
     </div>
     
     <div class="dashboard-grid">
+    <div class="dashboard-card wallet">
+        <h2>Wallet Balance</h2>
+        <div class="balance-box">
+            <span class="amount">AED {{ request.user.customerprofile.wallet_balance }}</span>
+        </div>
+        <div class="recent-transactions">
+            <h3>Recent Transactions</h3>
+            {% for transaction in transactions|slice:":5" %}
+            <div class="transaction-item">
+                <span class="type {{ transaction.transaction_type }}">{{ transaction.transaction_type|title }}</span>
+                <span class="amount">AED {{ transaction.amount }}</span>
+                <span class="date">{{ transaction.created_at|date:"M d, Y" }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
         <div class="dashboard-card notifications">
             <h2>Recent Notifications</h2>
             {% if notifications %}

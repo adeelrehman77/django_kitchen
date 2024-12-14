@@ -1,4 +1,63 @@
 
+/* Wallet Styles */
+.wallet {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.balance-box {
+    text-align: center;
+    padding: 20px;
+    margin: 10px 0;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.balance-box .amount {
+    font-size: 2em;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.recent-transactions {
+    margin-top: 20px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.transaction-item .type {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.transaction-item .type.credit {
+    background: #d4edda;
+    color: #155724;
+}
+
+.transaction-item .type.debit {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.transaction-item .amount {
+    font-weight: bold;
+}
+
+.transaction-item .date {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+
 .weekdays-selection ul {
     list-style: none;
     padding: 0;

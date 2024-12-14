@@ -92,10 +92,12 @@ def profile(request):
         subscriptions = Subscription.objects.filter(customer=request.user.customerprofile)
         notifications = Notification.objects.filter(customer=request.user.customerprofile).order_by('-created_at')[:5]
         delivery_status = DeliveryStatus.objects.filter(subscription__customer=request.user.customerprofile)
+        transactions = WalletTransaction.objects.filter(customer=request.user.customerprofile).order_by('-created_at')
         return render(request, 'main/profile.html', {
             'subscriptions': subscriptions,
             'notifications': notifications,
-            'delivery_status': delivery_status
+            'delivery_status': delivery_status,
+            'transactions': transactions
         })
     except CustomerProfile.DoesNotExist:
         CustomerProfile.objects.create(user=request.user)
