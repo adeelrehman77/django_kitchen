@@ -20,7 +20,14 @@ class MenuListAdmin(admin.ModelAdmin):
 
 @admin.register(TimeSlot)
 class TimeSlotAdmin(admin.ModelAdmin):
-    list_display = ('start_time', 'end_time')
+    list_display = ('get_slot_name', 'start_time', 'end_time')
+    list_filter = ('name',)
+    
+    def get_slot_name(self, obj):
+        if obj.name == 'custom' and obj.custom_name:
+            return obj.custom_name
+        return obj.get_name_display()
+    get_slot_name.short_description = 'Slot Name'
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):

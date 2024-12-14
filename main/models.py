@@ -29,11 +29,21 @@ class MenuList(models.Model):
         return self.name
 
 class TimeSlot(models.Model):
+    SLOT_CHOICES = [
+        ('breakfast', 'Breakfast'),
+        ('lunch', 'Lunch'),
+        ('dinner', 'Dinner'),
+        ('custom', 'Custom'),
+    ]
+    name = models.CharField(max_length=50, choices=SLOT_CHOICES, default='custom')
+    custom_name = models.CharField(max_length=50, blank=True, null=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
     
     def __str__(self):
-        return f"{self.start_time} - {self.end_time}"
+        if self.name == 'custom' and self.custom_name:
+            return f"{self.custom_name}: {self.start_time} - {self.end_time}"
+        return f"{self.get_name_display()}: {self.start_time} - {self.end_time}"
 
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
