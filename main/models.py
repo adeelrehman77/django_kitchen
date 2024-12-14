@@ -137,7 +137,7 @@ class Notification(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+        return f"{self.customer.user.first_name} {self.customer.user.last_name}"
 
 class DeliveryStatus(models.Model):
     STATUS_CHOICES = [
