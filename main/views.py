@@ -58,7 +58,17 @@ def subscribe(request):
 def profile(request):
     try:
         subscriptions = Subscription.objects.filter(customer=request.user.customerprofile)
-        return render(request, 'main/profile.html', {'subscriptions': subscriptions})
+        notifications = Notification.objects.filter(customer=request.user.customerprofile).order_by('-created_at')[:5]
+        delivery_status = DeliveryStatus.objects.filter(subscription__customer=request.user.customerprofile)
+        return render(request, 'main/profile.html', {
+            'subscriptions': subscriptions,
+            'notifications': notifications,
+            'delivery_status': delivery_status
+        })
     except CustomerProfile.DoesNotExist:
         CustomerProfile.objects.create(user=request.user)
-        return render(request, 'main/profile.html', {'subscriptions': []})
+        return render(request, 'main/profile.html', {'subscriptions': [], 'notifications': [], 'delivery_status': []})
+
+def menu_preview(request, menu_id):
+    menu = MenuList.objects.get(id=menu_id)
+    return render(request, 'main/menu_preview.html', {'menu': menu})

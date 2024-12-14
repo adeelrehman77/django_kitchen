@@ -1,0 +1,18 @@
+
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="menu-preview">
+    <h2>{{ menu.name }}</h2>
+    <div class="menu-items">
+        {% for item in menu.items.all %}
+        <div class="menu-item">
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.description }}</p>
+            <p class="price">${{ item.price }}</p>
+            <p class="category">{{ item.category.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
