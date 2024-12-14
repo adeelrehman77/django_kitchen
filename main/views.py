@@ -93,8 +93,6 @@ from django.http import HttpResponse
 import csv
 
 def subscription_report(request):
-    import xlwt
-    
     subscriptions = Subscription.objects.select_related(
         'customer', 'menu', 'time_slot'
     ).prefetch_related('deliverystatus_set').all()
@@ -111,28 +109,15 @@ def subscription_report(request):
     if payment_filter:
         subscriptions = subscriptions.filter(payment_mode=payment_filter)
     
-    if request.GET.get('export') == 'xls':
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="subscriptions.xls"'
+    if request.GET.get('export') == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="subscriptions.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Customer', 'Menu', 'Time Slot', 'Start Date', 'End Date', 
+                        'Payment Mode', 'Status', 'Total Deliveries', 'Pending', 'Completed'])
         
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('Subscriptions Report')
-        
-        # Sheet header
-        row_num = 0
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        
-        columns = ['Customer', 'Menu', 'Time Slot', 'Start Date', 'End Date', 
-                  'Payment Mode', 'Status', 'Total Deliveries', 'Pending', 'Completed']
-        
-        for col_num in range(len(columns)):
-            ws.write(row_num, col_num, columns[col_num], font_style)
-        
-        font_style = xlwt.XFStyle()
         for sub in subscriptions:
-            row_num += 1
-            row = [
+            writer.writerow([
                 sub.customer.user.username,
                 sub.menu.name,
                 str(sub.time_slot),
@@ -143,11 +128,7 @@ def subscription_report(request):
                 sub.deliverystatus_set.count(),
                 sub.deliverystatus_set.filter(status='pending').count(),
                 sub.deliverystatus_set.filter(status='delivered').count()
-            ]
-            for col_num in range(len(row)):
-                ws.write(row_num, col_num, str(row[col_num]), font_style)
-                
-        wb.save(response)
+            ])
         return response
         
     context = {
