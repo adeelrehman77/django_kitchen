@@ -27,7 +27,7 @@
             {% if subscriptions %}
                 {% for sub in subscriptions %}
                 <div class="subscription-item">
-                    <h3>{{ sub.menu.name }}</h3>
+                    <h3>{{ sub.item.name }}</h3>
                     <div class="subscription-details">
                         <p><strong>Duration:</strong> {{ sub.start_date }} to {{ sub.end_date }}</p>
                         <p><strong>Time Slot:</strong> {{ sub.time_slot }}</p>
