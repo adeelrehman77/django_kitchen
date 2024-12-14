@@ -10,9 +10,13 @@ from django import forms
 def home(request):
     try:
         items = Item.objects.filter(is_active=True)
-        return render(request, 'main/home.html', {'items': items})
-    except:
-        return render(request, 'main/home.html', {'items': []})
+        home_content = HomeContent.objects.filter(is_active=True).first()
+        return render(request, 'main/home.html', {
+            'items': items,
+            'home_content': home_content
+        })
+    except Exception as e:
+        return render(request, 'main/home.html', {'items': [], 'home_content': None})
 
 def register(request):
     if request.method == 'POST':

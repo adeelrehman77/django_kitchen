@@ -5,6 +5,13 @@ from django.utils import timezone
 import uuid
 from .models import *
 
+@admin.register(HomeContent)
+class HomeContentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_active', 'priority', 'created_at')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'subtitle')
+    ordering = ('-priority', '-created_at')
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active')

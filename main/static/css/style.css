@@ -1,4 +1,24 @@
 
+.home-banner {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background: #f8f9fa;
+}
+
+.banner-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+
 /* Wallet Styles */
 .wallet {
     background: #fff;

@@ -113,6 +113,20 @@ class CustomerProfile(models.Model):
         
         return transaction
 
+class HomeContent(models.Model):
+    title = models.CharField(max_length=200)
+    subtitle = models.CharField(max_length=300, blank=True)
+    banner_image = models.ImageField(upload_to='homepage/', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    priority = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['-priority', '-created_at']
+
+    def __str__(self):
+        return self.title
+
 class Notification(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
     message = models.TextField()

@@ -2,7 +2,20 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>Fun Adventure Kitchen</h1>
+<div class="home-banner">
+    {% if home_content %}
+        {% if home_content.banner_image %}
+            <img src="{{ home_content.banner_image.url }}" alt="{{ home_content.title }}" class="banner-image">
+        {% endif %}
+        <h1>{{ home_content.title }}</h1>
+        {% if home_content.subtitle %}
+            <p class="subtitle">{{ home_content.subtitle }}</p>
+        {% endif %}
+    {% else %}
+        <h1>Fun Adventure Kitchen</h1>
+    {% endif %}
+</div>
+
 <div class="items-list">
     {% for item in items %}
     <div class="item-card">
