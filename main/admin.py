@@ -38,9 +38,26 @@ class TimeSlotAdmin(admin.ModelAdmin):
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone', 'zone', 'route', 'building_name', 'active_subscription', 'get_subscription_stats', 'get_delivery_stats')
-    list_filter = ('zone', 'route', 'subscription__payment_mode')
-    search_fields = ('user__username', 'phone', 'building_name', 'flat_number')
+    list_display = ('user', 'phone', 'email', 'status', 'city', 'zone', 'route', 'area', 'registered_on', 'credit_limit', 'wallet_balance')
+    list_filter = ('status', 'city', 'zone', 'route', 'area')
+    search_fields = ('user__username', 'user__email', 'phone', 'address_line1', 'address_line2', 'landmark', 'google_address')
+    readonly_fields = ('registered_on',)
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('user', 'phone', 'status', 'registered_on')
+        }),
+        ('Location Details', {
+            'fields': ('address_line1', 'address_line2', 'landmark', 'google_address', 'latitude', 'longitude',
+                      'city', 'zone', 'route', 'area')
+        }),
+        ('Financial', {
+            'fields': ('credit_limit', 'wallet_balance')
+        })
+    )
+
+    def email(self, obj):
+        return obj.user.email
+    email.short_description = 'Email'
     raw_id_fields = ('user',)
     actions = ['download_customer_report']
 
