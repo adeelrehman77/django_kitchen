@@ -129,8 +129,30 @@ def wallet_topup(request):
 def transaction_history(request):
     transactions = WalletTransaction.objects.filter(
         customer=request.user.customerprofile
-    ).order_by('-created_at')
-    return render(request, 'main/transaction_history.html', {'transactions': transactions})
+    )
+    
+    # Filter by transaction type
+    tx_type = request.GET.get('type')
+    if tx_type in ['credit', 'debit']:
+        transactions = transactions.filter(transaction_type=tx_type)
+    
+    # Filter by date range
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    if start_date:
+        transactions = transactions.filter(created_at__date__gte=start_date)
+    if end_date:
+        transactions = transactions.filter(created_at__date__lte=end_date)
+        
+    transactions = transactions.order_by('-created_at')
+    
+    context = {
+        'transactions': transactions,
+        'tx_type': tx_type,
+        'start_date': start_date,
+        'end_date': end_date
+    }
+    return render(request, 'main/transaction_history.html', context)
 
 def menu_preview(request, menu_id):
     menu = MenuList.objects.get(id=menu_id)

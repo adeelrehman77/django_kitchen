@@ -4,6 +4,29 @@
 {% block content %}
 <div class="transactions-page">
     <h2>Transaction History</h2>
+    
+    <div class="filters">
+        <form method="get" class="filter-form">
+            <div class="filter-group">
+                <label>Type:</label>
+                <select name="type">
+                    <option value="">All</option>
+                    <option value="credit" {% if tx_type == 'credit' %}selected{% endif %}>Credit</option>
+                    <option value="debit" {% if tx_type == 'debit' %}selected{% endif %}>Debit</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>From:</label>
+                <input type="date" name="start_date" value="{{ start_date }}">
+            </div>
+            <div class="filter-group">
+                <label>To:</label>
+                <input type="date" name="end_date" value="{{ end_date }}">
+            </div>
+            <button type="submit">Filter</button>
+        </form>
+    </div>
+
     <div class="transactions-list">
         {% for transaction in transactions %}
         <div class="transaction-card {{ transaction.transaction_type }}">
