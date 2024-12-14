@@ -3,17 +3,23 @@
 
 {% block content %}
 <div class="home-banner">
-    {% if home_content %}
-        {% if home_content.banner_image %}
-            <img src="{{ home_content.banner_image.url }}" alt="{{ home_content.title }}" class="banner-image">
+    <div class="logo-container">
+        <img src="/static/KITCHEN LOGO trp.png" alt="Kitchen Logo" class="logo-image">
+    </div>
+</div>
+
+<div class="promotional-banners">
+    {% for content in home_contents|slice:":2" %}
+    <div class="promo-box">
+        {% if content.banner_image %}
+            <img src="{{ content.banner_image.url }}" alt="{{ content.title }}">
         {% endif %}
-        <h1>{{ home_content.title }}</h1>
-        {% if home_content.subtitle %}
-            <p class="subtitle">{{ home_content.subtitle }}</p>
+        <h2>{{ content.title }}</h2>
+        {% if content.subtitle %}
+            <p>{{ content.subtitle }}</p>
         {% endif %}
-    {% else %}
-        <h1>Fun Adventure Kitchen</h1>
-    {% endif %}
+    </div>
+    {% endfor %}
 </div>
 
 <div class="items-list">

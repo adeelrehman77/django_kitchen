@@ -10,10 +10,10 @@ from django import forms
 def home(request):
     try:
         items = Item.objects.filter(is_active=True)
-        home_content = HomeContent.objects.filter(is_active=True).first()
+        home_contents = HomeContent.objects.filter(is_active=True).order_by('-priority')[:2]
         return render(request, 'main/home.html', {
             'items': items,
-            'home_content': home_content
+            'home_contents': home_contents
         })
     except Exception as e:
         return render(request, 'main/home.html', {'items': [], 'home_content': None})
