@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'import_export',
     'main',
     'delivery',
-    'import_export',
 ]
 
 MIDDLEWARE = [
