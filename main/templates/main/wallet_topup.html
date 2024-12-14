@@ -1,0 +1,16 @@
+
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="wallet-topup">
+    <h2>Top Up Wallet</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="amount">Amount (AED)</label>
+            <input type="number" name="amount" id="amount" min="0" step="0.01" required>
+        </div>
+        <button type="submit" class="btn">Add Money</button>
+    </form>
+</div>
+{% endblock %}

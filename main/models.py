@@ -89,6 +89,30 @@ class CustomerProfile(models.Model):
         
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.zone})"
+        
+    def add_transaction(self, amount, transaction_type, description):
+        """Process a wallet transaction and update balance"""
+        import uuid
+        
+        if transaction_type == 'debit' and self.wallet_balance < amount:
+            raise ValueError("Insufficient wallet balance")
+            
+        reference_id = str(uuid.uuid4())
+        transaction = WalletTransaction.objects.create(
+            customer=self,
+            amount=amount,
+            transaction_type=transaction_type,
+            description=description,
+            reference_id=reference_id
+        )
+        
+        if transaction_type == 'credit':
+            self.wallet_balance += amount
+        else:
+            self.wallet_balance -= amount
+        self.save()
+        
+        return transaction
 
 class Notification(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)

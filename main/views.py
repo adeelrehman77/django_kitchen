@@ -103,6 +103,28 @@ def profile(request):
         CustomerProfile.objects.create(user=request.user)
         return render(request, 'main/profile.html', {'subscriptions': [], 'notifications': [], 'delivery_status': []})
 
+@login_required
+def wallet_topup(request):
+    if request.method == 'POST':
+        try:
+            amount = decimal.Decimal(request.POST.get('amount', 0))
+            if amount <= 0:
+                raise ValueError("Amount must be greater than 0")
+                
+            request.user.customerprofile.add_transaction(
+                amount=amount,
+                transaction_type='credit',
+                description='Wallet top-up'
+            )
+            messages.success(request, f'Successfully added {amount} to wallet')
+            
+        except (ValueError, decimal.InvalidOperation) as e:
+            messages.error(request, str(e))
+            
+        return redirect('profile')
+        
+    return render(request, 'main/wallet_topup.html')
+
 def menu_preview(request, menu_id):
     menu = MenuList.objects.get(id=menu_id)
     return render(request, 'main/menu_preview.html', {'menu': menu})
