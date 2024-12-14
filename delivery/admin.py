@@ -34,3 +34,22 @@ admin.site.register(Hub, HubAdmin)
 admin.site.register(Zone, ZoneAdmin)
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Driver, DriverAdmin)
+from django.contrib import admin
+from .models import *
+
+@admin.register(Zone)
+class ZoneAdmin(admin.ModelAdmin):
+    list_display = ('name', 'code')
+    search_fields = ('name', 'code')
+
+@admin.register(Route)
+class RouteAdmin(admin.ModelAdmin):
+    list_display = ('name', 'code', 'zone')
+    list_filter = ('zone',)
+    search_fields = ('name', 'code')
+
+@admin.register(Driver)
+class DriverAdmin(admin.ModelAdmin):
+    list_display = ('name', 'phone', 'route')
+    list_filter = ('route', 'route__zone')
+    search_fields = ('name', 'phone')
