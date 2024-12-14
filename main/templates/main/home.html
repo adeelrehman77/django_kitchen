@@ -4,6 +4,12 @@
 {% block content %}
 <div class="home-banner">
     {% if home_content %}
+        {% if user.is_staff %}
+        <div class="admin-controls">
+            <a href="/admin/main/homecontent/{{ home_content.id }}/change/" class="btn btn-edit">Edit</a>
+            <a href="/admin/main/homecontent/{{ home_content.id }}/delete/" class="btn btn-delete">Delete</a>
+        </div>
+        {% endif %}
         {% if home_content.banner_image %}
             <img src="{{ home_content.banner_image.url }}" alt="{{ home_content.title }}" class="banner-image">
         {% endif %}
