@@ -120,6 +120,14 @@ class SubscriptionAdmin(admin.ModelAdmin):
         return f"Total: {total} | Delivered: {delivered} | Pending: {pending}"
     get_delivery_stats.short_description = 'Delivery Stats'
 
+@admin.register(HomeContent)
+class HomeContentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'subtitle', 'is_active', 'priority', 'created_at')
+    list_editable = ('is_active', 'priority')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'subtitle')
+    ordering = ('-priority', '-created_at')
+
 @admin.register(DeliveryStatus)
 class DeliveryStatusAdmin(admin.ModelAdmin):
     list_display = ('subscription', 'date', 'status', 'customer_name', 'menu_name')
