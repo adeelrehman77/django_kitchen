@@ -70,7 +70,7 @@ class Subscription(models.Model):
     ]
     
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
-    menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
