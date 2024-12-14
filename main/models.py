@@ -54,36 +54,10 @@ class TimeSlot(models.Model):
         return f"{self.get_name_display()}: {self.start_time} - {self.end_time}"
 
 class CustomerProfile(models.Model):
-    PAYMENT_CHOICES = [
-        ('cash', 'Cash'),
-        ('bank', 'Bank Transfer'),
-        ('card', 'Credit Card'),
-        ('upi', 'UPI'),
-    ]
-    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
-    zone = models.ForeignKey('delivery.Zone', on_delete=models.SET_NULL, null=True)
-    route = models.ForeignKey('delivery.Route', on_delete=models.SET_NULL, null=True)
-    building_name = models.CharField(max_length=200)
-    flat_number = models.CharField(max_length=50)
-    floor_number = models.CharField(max_length=10)
-    landmark = models.CharField(max_length=200, blank=True)
-    preferred_payment = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='cash')
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.get_full_name()} - {self.building_name}"
-
-    @property
-    def full_address(self):
-        return f"Flat {self.flat_number}, Floor {self.floor_number}, {self.building_name}"
-
-    @property
-    def active_subscription(self):
-        return self.subscription_set.filter(end_date__gte=datetime.date.today()).first()
+    address = models.TextField()
+    location = models.CharField(max_length=100)
 
 class Notification(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
@@ -96,44 +70,6 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
-
-class Hub(models.Model):
-    name = models.CharField(max_length=100)
-    address = models.TextField()
-    contact_number = models.CharField(max_length=15)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
-
-class Zone(models.Model):
-    hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.hub.name} - {self.name}"
-
-class Route(models.Model):
-    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    estimated_delivery_time = models.IntegerField(help_text="Estimated delivery time in minutes")
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.zone.name} - {self.name}"
-
-class Driver(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=15)
-    license_number = models.CharField(max_length=50)
-    assigned_route = models.ForeignKey(Route, on_delete=models.SET_NULL, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"{self.user.get_full_name()} ({self.license_number})"
 
 class DeliveryStatus(models.Model):
     STATUS_CHOICES = [
