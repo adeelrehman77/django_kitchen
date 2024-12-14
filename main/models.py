@@ -58,6 +58,15 @@ class CustomerProfile(models.Model):
     phone = models.CharField(max_length=15)
     address = models.TextField()
     location = models.CharField(max_length=100)
+
+class Notification(models.Model):
+    customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
     
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
