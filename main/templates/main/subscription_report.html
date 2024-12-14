@@ -4,28 +4,58 @@
 {% block content %}
 <div class="subscription-report">
     <h2>Subscription Report</h2>
+    
+    <div class="filters">
+        <form method="get" class="filter-form">
+            <select name="status" onchange="this.form.submit()">
+                <option value="">All Statuses</option>
+                <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                <option value="expired" {% if request.GET.status == 'expired' %}selected{% endif %}>Expired</option>
+            </select>
+            <select name="payment" onchange="this.form.submit()">
+                <option value="">All Payment Modes</option>
+                {% for value, label in payment_choices %}
+                    <option value="{{ value }}" {% if request.GET.payment == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
     <table class="report-table">
         <thead>
             <tr>
                 <th>Customer</th>
                 <th>Menu</th>
                 <th>Time Slot</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th>Duration</th>
                 <th>Payment Mode</th>
-                <th>Selected Days</th>
+                <th>Status</th>
+                <th>Delivery Stats</th>
             </tr>
         </thead>
         <tbody>
             {% for sub in subscriptions %}
-            <tr>
+            <tr class="{% if sub.end_date < today %}expired{% else %}active{% endif %}">
                 <td>{{ sub.customer.user.username }}</td>
                 <td>{{ sub.menu.name }}</td>
                 <td>{{ sub.time_slot }}</td>
-                <td>{{ sub.start_date }}</td>
-                <td>{{ sub.end_date }}</td>
+                <td>
+                    {{ sub.start_date|date:"M d, Y" }} - {{ sub.end_date|date:"M d, Y" }}
+                    <br>
+                    <small>{{ sub.selected_days|join:", " }}</small>
+                </td>
                 <td>{{ sub.get_payment_mode_display }}</td>
-                <td>{{ sub.selected_days|join:", " }}</td>
+                <td>{% if sub.end_date < today %}Expired{% else %}Active{% endif %}</td>
+                <td>
+                    <div class="delivery-stats">
+                        <span class="stat delivered">{{ sub.deliverystatus_set.filter.count }}</span> deliveries
+                        <br>
+                        <small>
+                            {{ sub.deliverystatus_set.filter.count }} pending
+                            {{ sub.deliverystatus_set.filter.count }} completed
+                        </small>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

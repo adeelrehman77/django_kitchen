@@ -90,5 +90,25 @@ def menu_preview(request, menu_id):
     menu = MenuList.objects.get(id=menu_id)
     return render(request, 'main/menu_preview.html', {'menu': menu})
 def subscription_report(request):
-    all_subscriptions = Subscription.objects.select_related('customer', 'menu', 'time_slot').all()
-    return render(request, 'main/subscription_report.html', {'subscriptions': all_subscriptions})
+    subscriptions = Subscription.objects.select_related(
+        'customer', 'menu', 'time_slot'
+    ).prefetch_related('deliverystatus_set').all()
+    
+    status_filter = request.GET.get('status')
+    payment_filter = request.GET.get('payment')
+    today = datetime.date.today()
+    
+    if status_filter == 'active':
+        subscriptions = subscriptions.filter(end_date__gte=today)
+    elif status_filter == 'expired':
+        subscriptions = subscriptions.filter(end_date__lt=today)
+        
+    if payment_filter:
+        subscriptions = subscriptions.filter(payment_mode=payment_filter)
+        
+    context = {
+        'subscriptions': subscriptions,
+        'payment_choices': Subscription.PAYMENT_CHOICES,
+        'today': today
+    }
+    return render(request, 'main/subscription_report.html', context)

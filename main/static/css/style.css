@@ -91,6 +91,64 @@ body {
     background: #0056b3;
 }
 
+.subscription-report {
+    padding: 20px;
+}
+
+.filter-form {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.filter-form select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th,
+.report-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.report-table th {
+    background-color: #f5f5f5;
+}
+
+.report-table tr.expired {
+    background-color: #fff5f5;
+}
+
+.report-table tr.active {
+    background-color: #f0fff4;
+}
+
+.delivery-stats {
+    text-align: center;
+}
+
+.stat {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.stat.delivered {
+    background-color: #d4edda;
+    color: #155724;
+}
+
 nav {
     margin-bottom: 20px;
 }
