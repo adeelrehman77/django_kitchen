@@ -92,10 +92,30 @@ def menu_preview(request, menu_id):
 from django.http import HttpResponse
 import csv
 
+import xlwt
+from django.http import HttpResponse
+
 def subscription_report(request):
     subscriptions = Subscription.objects.select_related(
         'customer', 'menu', 'time_slot'
     ).prefetch_related('deliverystatus_set').all()
+    
+    if request.GET.get('export') == 'excel':
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="subscriptions.xls"'
+        
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Subscriptions')
+        
+        row_num = 0
+        columns = ['Customer', 'Menu', 'Time Slot', 'Start Date', 'End Date', 
+                  'Payment Mode', 'Status', 'Total Deliveries', 'Pending', 'Completed']
+        
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+        
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
     
     status_filter = request.GET.get('status')
     payment_filter = request.GET.get('payment')

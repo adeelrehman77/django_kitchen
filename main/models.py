@@ -114,6 +114,7 @@ class Subscription(models.Model):
     menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
+    is_active = models.BooleanField(default=True)
     time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
     payment_mode = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
     want_notifications = models.BooleanField(default=True)
