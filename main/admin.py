@@ -38,8 +38,21 @@ class TimeSlotAdmin(admin.ModelAdmin):
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone', 'location')
-    search_fields = ('user__username', 'phone', 'location')
+    list_display = ('user', 'phone', 'zone', 'route', 'building_name', 'is_active')
+    list_filter = ('zone', 'route', 'is_active', 'preferred_payment')
+    search_fields = ('user__username', 'user__first_name', 'phone', 'building_name', 'flat_number')
+    raw_id_fields = ('user',)
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('user', 'phone', 'is_active')
+        }),
+        ('Location Details', {
+            'fields': ('zone', 'route', 'building_name', 'flat_number', 'floor_number', 'landmark')
+        }),
+        ('Payment Information', {
+            'fields': ('preferred_payment',)
+        })
+    )
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):

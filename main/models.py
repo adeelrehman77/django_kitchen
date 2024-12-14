@@ -54,10 +54,36 @@ class TimeSlot(models.Model):
         return f"{self.get_name_display()}: {self.start_time} - {self.end_time}"
 
 class CustomerProfile(models.Model):
+    PAYMENT_CHOICES = [
+        ('cash', 'Cash'),
+        ('bank', 'Bank Transfer'),
+        ('card', 'Credit Card'),
+        ('upi', 'UPI'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
-    address = models.TextField()
-    location = models.CharField(max_length=100)
+    zone = models.ForeignKey('delivery.Zone', on_delete=models.SET_NULL, null=True)
+    route = models.ForeignKey('delivery.Route', on_delete=models.SET_NULL, null=True)
+    building_name = models.CharField(max_length=200)
+    flat_number = models.CharField(max_length=50)
+    floor_number = models.CharField(max_length=10)
+    landmark = models.CharField(max_length=200, blank=True)
+    preferred_payment = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='cash')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.building_name}"
+
+    @property
+    def full_address(self):
+        return f"Flat {self.flat_number}, Floor {self.floor_number}, {self.building_name}"
+
+    @property
+    def active_subscription(self):
+        return self.subscription_set.filter(end_date__gte=datetime.date.today()).first()
 
 class Notification(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
