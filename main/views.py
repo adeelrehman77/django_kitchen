@@ -31,10 +31,27 @@ class SubscriptionForm(forms.ModelForm):
         model = Subscription
         fields = ['menu', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
-            'selected_days': forms.CheckboxSelectMultiple(choices=[(i, day) for i, day in enumerate(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])])
+            'start_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
+            'selected_days': forms.CheckboxSelectMultiple(choices=[(str(i), day) for i, day in enumerate(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])]),
+            'payment_mode': forms.RadioSelect(),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        selected_days = cleaned_data.get('selected_days')
+
+        if not selected_days:
+            raise forms.ValidationError('Please select at least one day')
+            
+        if start_date and end_date:
+            if start_date < datetime.date.today():
+                raise forms.ValidationError('Start date cannot be in the past')
+            if (end_date - start_date).days > 30:
+                raise forms.ValidationError('Subscription cannot exceed 30 days')
+        return cleaned_data
 
 @login_required
 def subscribe(request):

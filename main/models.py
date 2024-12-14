@@ -40,6 +40,13 @@ class TimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.start_time >= self.end_time:
+            raise ValidationError('End time must be after start time')
+        if self.name == 'custom' and not self.custom_name:
+            raise ValidationError('Custom name is required for custom time slots')
+
     def __str__(self):
         if self.name == 'custom' and self.custom_name:
             return f"{self.custom_name}: {self.start_time} - {self.end_time}"
