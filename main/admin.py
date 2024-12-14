@@ -95,7 +95,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(DeliveryStatus)
 class DeliveryStatusAdmin(admin.ModelAdmin):
-    list_display = ('subscription', 'date', 'status', 'customer_name', 'menu_name', 'zone', 'route')
+    list_display = ('subscription', 'date', 'status', 'customer_name', 'menu_name')
     list_filter = ('status', 'date', 'subscription__menu', 'subscription__customer__zone', 'subscription__customer__route')
     search_fields = ('subscription__customer__user__username', 'subscription__menu__name')
     date_hierarchy = 'date'
