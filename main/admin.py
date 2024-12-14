@@ -46,6 +46,31 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode')
     list_filter = ('payment_mode', 'time_slot')
 
+@admin.register(Hub)
+class HubAdmin(admin.ModelAdmin):
+    list_display = ('name', 'contact_number', 'is_active')
+    search_fields = ('name', 'address')
+    list_filter = ('is_active',)
+
+@admin.register(Zone)
+class ZoneAdmin(admin.ModelAdmin):
+    list_display = ('name', 'hub', 'is_active')
+    list_filter = ('hub', 'is_active')
+    search_fields = ('name', 'description')
+
+@admin.register(Route)
+class RouteAdmin(admin.ModelAdmin):
+    list_display = ('name', 'zone', 'estimated_delivery_time', 'is_active')
+    list_filter = ('zone__hub', 'zone', 'is_active')
+    search_fields = ('name', 'description')
+
+@admin.register(Driver)
+class DriverAdmin(admin.ModelAdmin):
+    list_display = ('user', 'phone', 'license_number', 'assigned_route', 'is_active')
+    list_filter = ('is_active', 'assigned_route__zone__hub')
+    search_fields = ('user__username', 'license_number', 'phone')
+    raw_id_fields = ('user',)
+
 @admin.register(DeliveryStatus)
 class DeliveryStatusAdmin(admin.ModelAdmin):
     list_display = ('subscription', 'date', 'status')
