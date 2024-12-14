@@ -1,44 +1,59 @@
+
 {% extends 'main/base.html' %}
 
 {% block content %}
-<div class="profile-container">
-    <div class="notifications">
-        <h2>Recent Notifications</h2>
-        {% if notifications %}
-            {% for notification in notifications %}
-            <div class="notification {% if not notification.is_read %}unread{% endif %}">
-                {{ notification.message }}
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No notifications</p>
-        {% endif %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1>Welcome, {{ request.user.first_name|default:request.user.username }}</h1>
     </div>
-
-    <div class="subscriptions">
-        <h2>Your Subscriptions</h2>
-        {% if subscriptions %}
-            {% for sub in subscriptions %}
-            <div class="subscription">
-                <h3>{{ sub.menu.name }}</h3>
-                <p>From: {{ sub.start_date }} To: {{ sub.end_date }}</p>
-                <p>Time slot: {{ sub.time_slot }}</p>
-                
-                <div class="delivery-status">
-                    <h4>Delivery Status</h4>
-                    {% for status in delivery_status %}
-                        {% if status.subscription == sub %}
-                        <div class="status-item">
-                            {{ status.date }}: {{ status.get_status_display }}
-                        </div>
-                        {% endif %}
-                    {% endfor %}
+    
+    <div class="dashboard-grid">
+        <div class="dashboard-card notifications">
+            <h2>Recent Notifications</h2>
+            {% if notifications %}
+                {% for notification in notifications %}
+                <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                    <p>{{ notification.message }}</p>
+                    <small>{{ notification.created_at|timesince }} ago</small>
                 </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No active subscriptions</p>
-        {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>No notifications</p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-card active-subscriptions">
+            <h2>Active Subscriptions</h2>
+            {% if subscriptions %}
+                {% for sub in subscriptions %}
+                <div class="subscription-item">
+                    <h3>{{ sub.menu.name }}</h3>
+                    <div class="subscription-details">
+                        <p><strong>Duration:</strong> {{ sub.start_date }} to {{ sub.end_date }}</p>
+                        <p><strong>Time Slot:</strong> {{ sub.time_slot }}</p>
+                        <p><strong>Payment:</strong> {{ sub.get_payment_mode_display }}</p>
+                    </div>
+                    
+                    <div class="delivery-status">
+                        <h4>Recent Deliveries</h4>
+                        <div class="status-grid">
+                            {% for status in delivery_status %}
+                                {% if status.subscription == sub %}
+                                <div class="status-item status-{{ status.status }}">
+                                    <div class="status-date">{{ status.date }}</div>
+                                    <div class="status-label">{{ status.get_status_display }}</div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No active subscriptions</p>
+                <a href="{% url 'subscribe' %}" class="btn">Subscribe Now</a>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
