@@ -129,8 +129,25 @@ def subscription_report(request):
         for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], font_style)
         
+        font_style = xlwt.XFStyle()
         for sub in subscriptions:
-            writer.writerow([
+            row_num += 1
+            row = [
+                sub.customer.user.username,
+                sub.menu.name,
+                str(sub.time_slot),
+                sub.start_date,
+                sub.end_date,
+                sub.get_payment_mode_display(),
+                'Active' if sub.end_date >= today else 'Expired',
+                sub.deliverystatus_set.count(),
+                sub.deliverystatus_set.filter(status='pending').count(),
+                sub.deliverystatus_set.filter(status='delivered').count()
+            ]
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, str(row[col_num]), font_style)
+                
+        wb.save(response)
                 sub.customer.user.username,
                 sub.menu.name,
                 str(sub.time_slot),
