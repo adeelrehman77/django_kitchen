@@ -27,15 +27,29 @@ def register(request):
     return render(request, 'main/register.html', {'form': form})
 
 class SubscriptionForm(forms.ModelForm):
+    phone = forms.CharField(max_length=15)
+    building_name = forms.CharField(max_length=200)
+    floor_number = forms.CharField(max_length=10)
+    flat_number = forms.CharField(max_length=10)
+
     class Meta:
         model = Subscription
-        fields = ['menu', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
+        fields = ['item', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
             'selected_days': forms.CheckboxSelectMultiple(choices=[(str(i), day) for i, day in enumerate(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])]),
             'payment_mode': forms.RadioSelect(),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user and user.customerprofile:
+            self.fields['phone'].initial = user.customerprofile.phone
+            self.fields['building_name'].initial = user.customerprofile.building_name
+            self.fields['floor_number'].initial = user.customerprofile.floor_number
+            self.fields['flat_number'].initial = user.customerprofile.flat_number
 
     def clean(self):
         cleaned_data = super().clean()
@@ -57,15 +71,24 @@ class SubscriptionForm(forms.ModelForm):
 def subscribe(request):
     try:
         if request.method == 'POST':
-            form = SubscriptionForm(request.POST)
+            form = SubscriptionForm(request.POST, user=request.user)
             if form.is_valid():
+                # Update customer profile
+                profile = request.user.customerprofile
+                profile.phone = form.cleaned_data['phone']
+                profile.building_name = form.cleaned_data['building_name']
+                profile.floor_number = form.cleaned_data['floor_number']
+                profile.flat_number = form.cleaned_data['flat_number']
+                profile.save()
+
+                # Create subscription
                 sub = form.save(commit=False)
-                sub.customer = request.user.customerprofile
+                sub.customer = profile
                 sub.save()
                 messages.success(request, 'Subscription created successfully!')
                 return redirect('profile')
         else:
-            form = SubscriptionForm()
+            form = SubscriptionForm(user=request.user)
         return render(request, 'main/subscribe.html', {'form': form})
     except Exception as e:
         messages.error(request, str(e))
