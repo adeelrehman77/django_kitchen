@@ -76,6 +76,17 @@ def subscribe(request):
             if form.is_valid():
                 sub = form.save(commit=False)
                 sub.customer = request.user.customerprofile
+                
+                # Calculate subscription cost
+                total_days = sum(1 for day in form.cleaned_data['selected_days'])
+                total_weeks = ((form.cleaned_data['end_date'] - form.cleaned_data['start_date']).days + 1) // 7
+                total_deliveries = total_days * total_weeks
+                total_cost = total_deliveries * 50  # Fixed price per delivery
+                
+                if form.cleaned_data['payment_mode'] != 'cash' and request.user.customerprofile.wallet_balance < total_cost:
+                    messages.error(request, f'Insufficient wallet balance. Required: {total_cost}')
+                    return redirect('wallet_topup')
+                    
                 sub.save()
                 messages.success(request, 'Subscription created successfully!')
                 return redirect('profile')

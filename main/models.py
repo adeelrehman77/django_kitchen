@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
@@ -171,6 +170,43 @@ class Subscription(models.Model):
             raise ValidationError('Please select at least one delivery day')
         if not all(day in ['0','1','2','3','4','5','6'] for day in self.selected_days):
             raise ValidationError('Invalid delivery days selected')
+        
+        # Check wallet balance for non-cash payments
+        if self.payment_mode != 'cash':
+            total_days = sum(1 for day in self.selected_days)
+            total_weeks = ((self.end_date - self.start_date).days + 1) // 7
+            total_deliveries = total_days * total_weeks
+            total_cost = total_deliveries * 50  # Assuming fixed price per delivery
+            
+            if self.customer.wallet_balance < total_cost:
+                raise ValidationError('Insufficient wallet balance for subscription')
+            
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        
+        if is_new:
+            # Create delivery status entries
+            current_date = self.start_date
+            while current_date <= self.end_date:
+                if str(current_date.weekday()) in self.selected_days:
+                    DeliveryStatus.objects.create(
+                        subscription=self,
+                        date=current_date,
+                        status='pending'
+                    )
+                current_date += datetime.timedelta(days=1)
+                
+            # Handle payment if using wallet
+            if self.payment_mode != 'cash':
+                total_deliveries = self.deliverystatus_set.count()
+                total_cost = total_deliveries * 50  # Fixed price per delivery
+                
+                self.customer.add_transaction(
+                    amount=total_cost,
+                    transaction_type='debit',
+                    description=f'Subscription payment for {self.menu.name}'
+                )
 
     def __str__(self):
         return f"{self.customer.user.username}'s subscription"
