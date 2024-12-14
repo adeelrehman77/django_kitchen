@@ -48,11 +48,11 @@
                 <td>{% if sub.end_date < today %}Expired{% else %}Active{% endif %}</td>
                 <td>
                     <div class="delivery-stats">
-                        <span class="stat delivered">{{ sub.deliverystatus_set.filter.count }}</span> deliveries
+                        <span class="stat delivered">{{ sub.deliverystatus_set.all.count }}</span> deliveries
                         <br>
                         <small>
-                            {{ sub.deliverystatus_set.filter.count }} pending
-                            {{ sub.deliverystatus_set.filter.count }} completed
+                            {{ sub.deliverystatus_set.filter.status="pending".count }} pending
+                            {{ sub.deliverystatus_set.filter.status="delivered".count }} completed
                         </small>
                     </div>
                 </td>

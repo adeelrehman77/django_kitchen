@@ -149,6 +149,17 @@ body {
     color: #155724;
 }
 
+.delivery-stats small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+}
+
+.delivery-stats .stat {
+    min-width: 24px;
+    text-align: center;
+}
+
 nav {
     margin-bottom: 20px;
 }
