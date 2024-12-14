@@ -27,13 +27,28 @@ def register(request):
     return render(request, 'main/register.html', {'form': form})
 
 class SubscriptionForm(forms.ModelForm):
+    DAYS_CHOICES = [
+        ('0', 'Monday'),
+        ('1', 'Tuesday'),
+        ('2', 'Wednesday'),
+        ('3', 'Thursday'),
+        ('4', 'Friday'),
+        ('5', 'Saturday'),
+        ('6', 'Sunday'),
+    ]
+    
+    selected_days = forms.MultipleChoiceField(
+        choices=DAYS_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
     class Meta:
         model = Subscription
         fields = ['menu', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
-            'selected_days': forms.CheckboxSelectMultiple(choices=[(str(i), day) for i, day in enumerate(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])]),
             'payment_mode': forms.RadioSelect(),
         }
 

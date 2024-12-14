@@ -1,4 +1,33 @@
 
+.weekdays-selection ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.weekdays-selection li {
+    margin-right: 15px;
+}
+
+.weekdays-selection label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
