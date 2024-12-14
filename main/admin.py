@@ -1,6 +1,8 @@
 
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils import timezone
+import uuid
 from .models import *
 
 @admin.register(Category)
@@ -131,3 +133,24 @@ class DeliveryStatusAdmin(admin.ModelAdmin):
     def menu_name(self, obj):
         return obj.subscription.menu.name
     menu_name.short_description = 'Menu'
+
+
+@admin.register(WalletTransaction)
+class WalletTransactionAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'amount', 'transaction_type', 'description', 'created_at')
+    list_filter = ('transaction_type', 'created_at')
+    search_fields = ('customer__user__username', 'reference_id', 'description')
+    readonly_fields = ('created_at', 'reference_id')
+
+    def save_model(self, request, obj, form, change):
+        if not obj.reference_id:
+            obj.reference_id = str(uuid.uuid4())
+        
+        if not change:  # Only update balance on new transactions
+            if obj.transaction_type == 'credit':
+                obj.customer.wallet_balance += obj.amount
+            else:
+                obj.customer.wallet_balance -= obj.amount
+            obj.customer.save()
+            
+        super().save_model(request, obj, form, change)

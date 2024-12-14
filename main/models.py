@@ -53,6 +53,22 @@ class TimeSlot(models.Model):
             return f"{self.custom_name}: {self.start_time} - {self.end_time}"
         return f"{self.get_name_display()}: {self.start_time} - {self.end_time}"
 
+class WalletTransaction(models.Model):
+    TRANSACTION_TYPES = [
+        ('credit', 'Credit'),
+        ('debit', 'Debit'),
+    ]
+    
+    customer = models.ForeignKey('CustomerProfile', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    description = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reference_id = models.CharField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return f"{self.transaction_type} - {self.amount} - {self.customer.user.username}"
+
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
@@ -61,6 +77,7 @@ class CustomerProfile(models.Model):
     building_name = models.CharField(max_length=200, default='Not Specified')
     floor_number = models.CharField(max_length=10, default='0')
     flat_number = models.CharField(max_length=10, default='0')
+    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     @property
     def full_address(self):
