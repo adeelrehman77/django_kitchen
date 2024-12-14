@@ -56,8 +56,22 @@ class TimeSlot(models.Model):
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
-    address = models.TextField()
-    location = models.CharField(max_length=100)
+    zone = models.ForeignKey('delivery.Zone', on_delete=models.SET_NULL, null=True)
+    route = models.ForeignKey('delivery.Route', on_delete=models.SET_NULL, null=True)
+    building_name = models.CharField(max_length=200)
+    floor_number = models.CharField(max_length=10)
+    flat_number = models.CharField(max_length=10)
+    
+    @property
+    def full_address(self):
+        return f"{self.building_name}, Flat {self.flat_number}, Floor {self.floor_number}"
+    
+    @property
+    def active_subscription(self):
+        return self.subscription_set.filter(end_date__gte=datetime.date.today()).first()
+        
+    def __str__(self):
+        return f"{self.user.get_full_name()} ({self.zone})"
 
 class Notification(models.Model):
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)

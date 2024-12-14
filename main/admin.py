@@ -38,8 +38,10 @@ class TimeSlotAdmin(admin.ModelAdmin):
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone', 'location')
-    search_fields = ('user__username', 'phone', 'location')
+    list_display = ('user', 'phone', 'zone', 'route', 'building_name', 'active_subscription')
+    list_filter = ('zone', 'route')
+    search_fields = ('user__username', 'phone', 'building_name', 'flat_number')
+    raw_id_fields = ('user',)
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
