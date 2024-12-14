@@ -54,28 +54,13 @@ class TimeSlot(models.Model):
         return f"{self.get_name_display()}: {self.start_time} - {self.end_time}"
 
 class CustomerProfile(models.Model):
-    STATUS_CHOICES = [
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
-        ('blocked', 'Blocked')
-    ]
-    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
-    address_line1 = models.CharField(max_length=255)
-    address_line2 = models.CharField(max_length=255, blank=True, null=True)
-    landmark = models.CharField(max_length=100, blank=True, null=True)
-    google_address = models.TextField(blank=True, null=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    city = models.CharField(max_length=100)
     zone = models.ForeignKey('delivery.Zone', on_delete=models.SET_NULL, null=True)
     route = models.ForeignKey('delivery.Route', on_delete=models.SET_NULL, null=True)
-    area = models.CharField(max_length=100)
-    registered_on = models.DateTimeField(auto_now_add=True)
-    credit_limit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    building_name = models.CharField(max_length=200, default='Not Specified')
+    floor_number = models.CharField(max_length=10, default='0')
+    flat_number = models.CharField(max_length=10, default='0')
     
     @property
     def full_address(self):
