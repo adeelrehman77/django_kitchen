@@ -18,8 +18,8 @@
                     <option value="{{ value }}" {% if request.GET.payment == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
-            <a href="?{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.payment %}payment={{ request.GET.payment }}&{% endif %}export=csv" 
-               class="btn btn-export">Export CSV</a>
+            <a href="?{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.payment %}payment={{ request.GET.payment }}&{% endif %}export=xls" 
+               class="btn btn-export">Export Excel</a>
         </form>
     </div>
 

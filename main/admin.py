@@ -59,24 +59,42 @@ class CustomerProfileAdmin(admin.ModelAdmin):
     get_delivery_stats.short_description = 'Delivery Success'
 
     def download_customer_report(self, request, queryset):
-        import csv
+        import xlwt
         from django.http import HttpResponse
         
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="customer_report.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['Customer', 'Phone', 'Zone', 'Route', 'Address', 'Active Subscriptions', 'Total Deliveries'])
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="customer_report.xls"'
+        
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Customer Report')
+        
+        # Sheet header
+        row_num = 0
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+        
+        columns = ['Customer', 'Phone', 'Zone', 'Route', 'Address', 'Active Subscriptions', 'Total Deliveries']
+        
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
+            
+        font_style = xlwt.XFStyle()
         
         for profile in queryset:
-            writer.writerow([
+            row_num += 1
+            row = [
                 profile.user.username,
                 profile.phone,
-                profile.zone,
-                profile.route,
+                str(profile.zone),
+                str(profile.route),
                 profile.full_address,
                 profile.subscription_set.filter(end_date__gte=datetime.date.today()).count(),
                 DeliveryStatus.objects.filter(subscription__customer=profile).count()
-            ])
+            ]
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, str(row[col_num]), font_style)
+                
+        wb.save(response)
         return response
     download_customer_report.short_description = "Download Customer Report"
 
