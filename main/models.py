@@ -42,7 +42,16 @@ class TimeSlot(models.Model):
     
     def clean(self):
         from django.core.exceptions import ValidationError
-        if self.start_time >= self.end_time:
+        from datetime import datetime
+
+        if not self.start_time or not self.end_time:
+            raise ValidationError('Both start time and end time are required.')
+            
+        # Convert string times to datetime objects for comparison
+        start = datetime.strptime(str(self.start_time), '%H:%M:%S').time()
+        end = datetime.strptime(str(self.end_time), '%H:%M:%S').time()
+        
+        if start >= end:
             raise ValidationError('End time must be after start time')
         if self.name == 'custom' and not self.custom_name:
             raise ValidationError('Custom name is required for custom time slots')
