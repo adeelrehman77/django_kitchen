@@ -171,7 +171,7 @@ class Subscription(models.Model):
     ]
     
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
-    menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
+    menu = models.ForeignKey(MenuList, on_delete=models.CASCADE, verbose_name='Items')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     start_date = models.DateField()
     end_date = models.DateField()
