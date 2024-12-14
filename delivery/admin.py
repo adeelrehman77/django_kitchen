@@ -26,14 +26,9 @@ class DriverResource(resources.ModelResource):
 
 class DriverAdmin(ImportExportModelAdmin):
     resource_class = DriverResource
-    list_display = ('user', 'phone', 'license_number', 'assigned_route', 'get_zones', 'is_active')
-    list_filter = ('is_active', 'assigned_zones', 'assigned_route__zone__hub')
+    list_display = ('user', 'phone', 'license_number', 'assigned_route', 'is_active')
+    list_filter = ('is_active', 'assigned_route__zone__hub')
     search_fields = ('user__username', 'user__first_name', 'license_number')
-    filter_horizontal = ('assigned_zones',)
-    
-    def get_zones(self, obj):
-        return ", ".join([zone.name for zone in obj.assigned_zones.all()])
-    get_zones.short_description = 'Assigned Zones'
 
 admin.site.register(Hub, HubAdmin)
 admin.site.register(Zone, ZoneAdmin)
