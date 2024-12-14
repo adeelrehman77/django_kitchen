@@ -58,9 +58,9 @@ class CustomerProfile(models.Model):
     phone = models.CharField(max_length=15)
     zone = models.ForeignKey('delivery.Zone', on_delete=models.SET_NULL, null=True)
     route = models.ForeignKey('delivery.Route', on_delete=models.SET_NULL, null=True)
-    building_name = models.CharField(max_length=200)
-    floor_number = models.CharField(max_length=10)
-    flat_number = models.CharField(max_length=10)
+    building_name = models.CharField(max_length=200, default='Not Specified')
+    floor_number = models.CharField(max_length=10, default='0')
+    flat_number = models.CharField(max_length=10, default='0')
     
     @property
     def full_address(self):
