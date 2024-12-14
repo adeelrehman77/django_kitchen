@@ -6,17 +6,20 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import *
 from django import forms
-import json
 
 def home(request):
-    menu_lists = MenuList.objects.filter(is_active=True)
-    return render(request, 'main/home.html', {'menu_lists': menu_lists})
+    try:
+        menu_lists = MenuList.objects.filter(is_active=True)
+        return render(request, 'main/home.html', {'menu_lists': menu_lists})
+    except:
+        return render(request, 'main/home.html', {'menu_lists': []})
 
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            CustomerProfile.objects.create(user=user)  # Create profile for user
             login(request, user)
             return redirect('home')
     else:
@@ -35,19 +38,27 @@ class SubscriptionForm(forms.ModelForm):
 
 @login_required
 def subscribe(request):
-    if request.method == 'POST':
-        form = SubscriptionForm(request.POST)
-        if form.is_valid():
-            sub = form.save(commit=False)
-            sub.customer = request.user.customerprofile
-            sub.save()
-            messages.success(request, 'Subscription created successfully!')
-            return redirect('profile')
-    else:
-        form = SubscriptionForm()
-    return render(request, 'main/subscribe.html', {'form': form})
+    try:
+        if request.method == 'POST':
+            form = SubscriptionForm(request.POST)
+            if form.is_valid():
+                sub = form.save(commit=False)
+                sub.customer = request.user.customerprofile
+                sub.save()
+                messages.success(request, 'Subscription created successfully!')
+                return redirect('profile')
+        else:
+            form = SubscriptionForm()
+        return render(request, 'main/subscribe.html', {'form': form})
+    except Exception as e:
+        messages.error(request, str(e))
+        return redirect('home')
 
 @login_required
 def profile(request):
-    subscriptions = Subscription.objects.filter(customer=request.user.customerprofile)
-    return render(request, 'main/profile.html', {'subscriptions': subscriptions})
+    try:
+        subscriptions = Subscription.objects.filter(customer=request.user.customerprofile)
+        return render(request, 'main/profile.html', {'subscriptions': subscriptions})
+    except CustomerProfile.DoesNotExist:
+        CustomerProfile.objects.create(user=request.user)
+        return render(request, 'main/profile.html', {'subscriptions': []})
