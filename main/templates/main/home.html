@@ -3,9 +3,9 @@
 
 {% block content %}
 <div class="home-banner">
-    
+    <h1 class="welcome-heading">Welcome to Fun Adventure Kitchen</h1>
 
-    <div class="promotional-banners">
+    <div class="promotional-banners right-aligned">
         {% for content in home_contents|slice:":2" %}
         <div class="promo-box">
             {% if content.banner_image %}

@@ -24,14 +24,25 @@
     object-fit: contain;
 }
 
-.promotional-banners {
+.welcome-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin: 2rem 0;
+    width: 100%;
+}
+
+.promotional-banners.right-aligned {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
     padding: 20px;
-    margin: 2rem auto;
+    margin: 2rem 0;
     max-width: 1200px;
     width: 100%;
+    margin-left: auto;
+    margin-right: 0;
 }
 
 .social-icons {
