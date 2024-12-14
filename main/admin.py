@@ -9,9 +9,15 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'price', 'is_active')
+    list_display = ('name', 'category', 'price', 'is_active', 'image_preview')
     list_filter = ('category', 'is_active')
     search_fields = ('name', 'description')
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="50" height="50" />', obj.image.url)
+        return "No Image"
+    image_preview.short_description = 'Image'
 
 @admin.register(MenuList)
 class MenuListAdmin(admin.ModelAdmin):
