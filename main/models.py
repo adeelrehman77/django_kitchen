@@ -126,6 +126,10 @@ class Subscription(models.Model):
             raise ValidationError('Subscription duration cannot exceed 30 days')
         if self.end_date < self.start_date:
             raise ValidationError('End date must be after start date')
+        if not self.selected_days:
+            raise ValidationError('Please select at least one delivery day')
+        if not all(day in ['0','1','2','3','4','5','6'] for day in self.selected_days):
+            raise ValidationError('Invalid delivery days selected')
 
     def __str__(self):
         return f"{self.customer.user.username}'s subscription"

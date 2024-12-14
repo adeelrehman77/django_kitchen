@@ -82,9 +82,18 @@ class CustomerProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode', 'get_delivery_stats')
+    list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode', 'get_selected_days', 'get_delivery_stats')
     list_filter = ('payment_mode', 'time_slot', 'start_date', 'end_date')
     search_fields = ('customer__user__username', 'menu__name')
+
+    def get_selected_days(self, obj):
+        days = {
+            '0': 'Mon', '1': 'Tue', '2': 'Wed',
+            '3': 'Thu', '4': 'Fri', '5': 'Sat', '6': 'Sun'
+        }
+        selected = [days[day] for day in obj.selected_days]
+        return ', '.join(selected)
+    get_selected_days.short_description = 'Delivery Days'
     
     def get_delivery_stats(self, obj):
         total = obj.deliverystatus_set.count()
