@@ -125,6 +125,13 @@ def wallet_topup(request):
         
     return render(request, 'main/wallet_topup.html')
 
+@login_required
+def transaction_history(request):
+    transactions = WalletTransaction.objects.filter(
+        customer=request.user.customerprofile
+    ).order_by('-created_at')
+    return render(request, 'main/transaction_history.html', {'transactions': transactions})
+
 def menu_preview(request, menu_id):
     menu = MenuList.objects.get(id=menu_id)
     return render(request, 'main/menu_preview.html', {'menu': menu})

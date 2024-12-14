@@ -57,6 +57,48 @@
     font-size: 0.9em;
 }
 
+.transactions-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.transaction-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.transaction-card.credit {
+    border-left: 4px solid #28a745;
+}
+
+.transaction-card.debit {
+    border-left: 4px solid #dc3545;
+}
+
+.transaction-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.transaction-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.no-transactions {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
 
 .weekdays-selection ul {
     list-style: none;

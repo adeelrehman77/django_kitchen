@@ -1,0 +1,27 @@
+
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="transactions-page">
+    <h2>Transaction History</h2>
+    <div class="transactions-list">
+        {% for transaction in transactions %}
+        <div class="transaction-card {{ transaction.transaction_type }}">
+            <div class="transaction-details">
+                <span class="type">{{ transaction.get_transaction_type_display }}</span>
+                <span class="amount">AED {{ transaction.amount }}</span>
+                <span class="date">{{ transaction.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="transaction-meta">
+                <span class="description">{{ transaction.description }}</span>
+                <span class="reference">Ref: {{ transaction.reference_id|truncatechars:8 }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-transactions">
+            No transactions found
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
