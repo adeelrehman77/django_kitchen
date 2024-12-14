@@ -71,6 +71,24 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
 
+class DeliveryStatus(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled')
+    ]
+    subscription = models.ForeignKey('Subscription', on_delete=models.CASCADE)
+    date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural = "Delivery Statuses"
+        
+    def __str__(self):
+        return f"{self.subscription} - {self.date} - {self.status}"
+
 class Subscription(models.Model):
     PAYMENT_CHOICES = [
         ('cash', 'Cash'),

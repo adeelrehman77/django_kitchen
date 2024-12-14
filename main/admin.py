@@ -45,3 +45,8 @@ class CustomerProfileAdmin(admin.ModelAdmin):
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode')
     list_filter = ('payment_mode', 'time_slot')
+
+@admin.register(DeliveryStatus)
+class DeliveryStatusAdmin(admin.ModelAdmin):
+    list_display = ('subscription', 'date', 'status')
+    list_filter = ('status', 'date')
