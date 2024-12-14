@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from .models import *
 from django import forms
 import json
@@ -9,6 +11,17 @@ import json
 def home(request):
     menu_lists = MenuList.objects.filter(is_active=True)
     return render(request, 'main/home.html', {'menu_lists': menu_lists})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'main/register.html', {'form': form})
 
 class SubscriptionForm(forms.ModelForm):
     class Meta:
