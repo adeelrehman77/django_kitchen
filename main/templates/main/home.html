@@ -2,10 +2,22 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h1>Welcome to My Django Site</h1>
-{% if user.is_authenticated %}
-    <p>Hello, {{ user.username }}!</p>
-{% else %}
-    <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a>.</p>
-{% endif %}
+<h1>Fun Adventure Kitchen</h1>
+<div class="menu-lists">
+    {% for menu in menu_lists %}
+    <div class="menu-card">
+        <h2>{{ menu.name }}</h2>
+        <ul>
+            {% for item in menu.items.all %}
+            <li>{{ item.name }} - ${{ item.price }}</li>
+            {% endfor %}
+        </ul>
+        {% if user.is_authenticated %}
+        <a href="{% url 'subscribe' %}?menu={{ menu.id }}" class="btn">Subscribe</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn">Login to Subscribe</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

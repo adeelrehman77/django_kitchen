@@ -1,0 +1,32 @@
+
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h2>Subscribe to Menu</h2>
+<form method="post" class="subscription-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Subscribe</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDate = document.querySelector('input[name="start_date"]');
+        const endDate = document.querySelector('input[name="end_date"]');
+        
+        function validateDates() {
+            const start = new Date(startDate.value);
+            const end = new Date(endDate.value);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 30) {
+                alert('Subscription duration cannot exceed 30 days');
+                endDate.value = '';
+            }
+        }
+        
+        endDate.addEventListener('change', validateDates);
+    });
+</script>
+{% endblock %}
