@@ -84,8 +84,17 @@ class CustomerProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode', 'get_selected_days', 'get_delivery_stats')
-    list_filter = ('payment_mode', 'time_slot', 'start_date', 'end_date')
+    list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode', 'status', 'get_selected_days', 'get_delivery_stats')
+    list_filter = ('payment_mode', 'time_slot', 'start_date', 'end_date', 'status')
+    actions = ['approve_subscriptions', 'reject_subscriptions']
+
+    def approve_subscriptions(self, request, queryset):
+        queryset.update(status='approved')
+    approve_subscriptions.short_description = "Approve selected subscriptions"
+
+    def reject_subscriptions(self, request, queryset):
+        queryset.update(status='rejected')
+    reject_subscriptions.short_description = "Reject selected subscriptions"
     search_fields = ('customer__user__username', 'menu__name')
 
     def get_selected_days(self, obj):

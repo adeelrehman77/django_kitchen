@@ -76,6 +76,7 @@ def subscribe(request):
             if form.is_valid():
                 sub = form.save(commit=False)
                 sub.customer = request.user.customerprofile
+                sub.status = 'pending'
                 
                 # Calculate subscription cost
                 total_days = sum(1 for day in form.cleaned_data['selected_days'])

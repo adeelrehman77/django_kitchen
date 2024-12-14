@@ -150,8 +150,15 @@ class Subscription(models.Model):
         ('card', 'Credit Card'),
     ]
     
+    STATUS_CHOICES = [
+        ('pending', 'Pending Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE)
     menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     start_date = models.DateField()
     end_date = models.DateField()
     is_active = models.BooleanField(default=True)
