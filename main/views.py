@@ -270,7 +270,7 @@ def delivery_summary(request):
     # Get all deliveries for today
     deliveries = DeliveryStatus.objects.filter(
         date=today
-    ).select_related('subscription__items')
+    ).select_related('subscription').prefetch_related('subscription__items')
     
     # Get product summary
     product_summary = []
