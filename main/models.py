@@ -232,10 +232,11 @@ class Subscription(models.Model):
                 total_deliveries = self.deliverystatus_set.count()
                 total_cost = total_deliveries * 50  # Fixed price per delivery
                 
+                items_names = ", ".join([item.name for item in self.items.all()])
                 self.customer.add_transaction(
                     amount=total_cost,
                     transaction_type='debit',
-                    description=f'Subscription payment for {self.menu.name}'
+                    description=f'Subscription payment for items: {items_names}'
                 )
 
     def __str__(self):

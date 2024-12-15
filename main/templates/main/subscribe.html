@@ -2,67 +2,64 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-<h2>Subscribe to Menu</h2>
-<form method="post" class="subscription-form">
-    {% csrf_token %}
-    <div class="form-group">
-        <label>Select Menu Package:</label>
-        <div class="menu-selection">
-            {{ form.menu }}
+<div class="subscription-form">
+    <h2>Create New Subscription</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="items-selection">
+            <h3>Available Items</h3>
+            <div class="items-grid">
+                {% for item in form.items.field.queryset %}
+                <div class="item-card">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-image">
+                    {% endif %}
+                    <h4>{{ item.name }}</h4>
+                    <p>{{ item.description }}</p>
+                    <p class="price">AED {{ item.price }}</p>
+                    <label>
+                        <input type="checkbox" name="items" value="{{ item.id }}" 
+                               {% if item.id in form.items.value %}checked{% endif %}>
+                        Select Item
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        <div id="menu-preview">
-            {% if form.menu.value %}
-                <a href="{% url 'menu_preview' form.menu.value %}" target="_blank">View Menu Details</a>
-            {% endif %}
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Start Date:</label>
-        {{ form.start_date }}
-    </div>
-    <div class="form-group">
-        <label>End Date:</label>
-        {{ form.end_date }}
-    </div>
-    <div class="form-group">
-        <label>Time Slot:</label>
-        {{ form.time_slot }}
-    </div>
-    <div class="form-group">
-        <label>Payment Mode:</label>
-        {{ form.payment_mode }}
-    </div>
-    <div class="form-group weekdays-selection">
-        <label>Select Delivery Days:</label>
-        {{ form.selected_days }}
-    </div>
-    <div class="form-group">
-        <label>
-            {{ form.want_notifications }}
-            Receive Notifications
-        </label>
-    </div>
-    <button type="submit" class="btn">Subscribe</button>
-</form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const startDate = document.querySelector('input[name="start_date"]');
-        const endDate = document.querySelector('input[name="end_date"]');
-        
-        function validateDates() {
-            const start = new Date(startDate.value);
-            const end = new Date(endDate.value);
-            const diffTime = Math.abs(end - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays > 30) {
-                alert('Subscription duration cannot exceed 30 days');
-                endDate.value = '';
-            }
-        }
-        
-        endDate.addEventListener('change', validateDates);
-    });
-</script>
+        <div class="form-group">
+            <label>Delivery Days:</label>
+            {{ form.selected_days }}
+        </div>
+
+        <div class="form-group">
+            <label>Start Date:</label>
+            {{ form.start_date }}
+        </div>
+
+        <div class="form-group">
+            <label>End Date:</label>
+            {{ form.end_date }}
+        </div>
+
+        <div class="form-group">
+            <label>Time Slot:</label>
+            {{ form.time_slot }}
+        </div>
+
+        <div class="form-group">
+            <label>Payment Mode:</label>
+            {{ form.payment_mode }}
+        </div>
+
+        <div class="form-group">
+            {{ form.want_notifications }}
+            <label for="{{ form.want_notifications.id_for_label }}">Receive Notifications</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Subscription</button>
+    </form>
+</div>
 {% endblock %}
