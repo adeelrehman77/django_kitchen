@@ -49,13 +49,12 @@ class SubscriptionForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['menu'].queryset = MenuList.objects.filter(is_active=True)
-        self.fields['menu'].widget.attrs.update({'class': 'form-control'})
-        self.fields['menu'].empty_label = None
+        self.fields['items'].queryset = Item.objects.filter(is_active=True)
+        self.fields['items'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = Subscription
-        fields = ['menu', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
+        fields = ['items', 'start_date', 'end_date', 'time_slot', 'payment_mode', 'want_notifications', 'selected_days']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today().isoformat()}),
