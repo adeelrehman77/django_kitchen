@@ -1,0 +1,47 @@
+python manage.py runserver 0.0.0.0:3000~/django$ python manage.py runserver 0.0.
+~/django$ python manage.py runserver 0.0.0.0:3000
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/nix/store/418nyl05dzqb57brvqjd1g22p27xyqbq-python3-3.10.14/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/nix/store/418nyl05dzqb57brvqjd1g22p27xyqbq-python3-3.10.14/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/core/management/commands/runserver.py", line 125, in inner_run
+    autoreload.raise_last_exception()
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/utils/autoreload.py", line 87, in raise_last_exception
+    raise _exception[1]
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/apps/registry.py", line 93, in populate
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Application labels aren't unique, duplicates: import_export
+/home/runner/django/django_project/settings.py changed, reloading.
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/nix/store/418nyl05dzqb57brvqjd1g22p27xyqbq-python3-3.10.14/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/nix/store/418nyl05dzqb57brvqjd1g22p27xyqbq-python3-3.10.14/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/core/management/commands/runserver.py", line 125, in inner_run
+    autoreload.raise_last_exception()
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/utils/autoreload.py", line 87, in raise_last_exception
+    raise _exception[1]
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/home/runner/django/.pythonlibs/lib/python3.10/site-packages/django/apps/registry.py", line 93, in populate
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Application labels aren't unique, duplicates: import_export
