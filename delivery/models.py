@@ -24,7 +24,7 @@ class Route(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    estimated_delivery_time = models.IntegerField(help_text="Estimated delivery time in minutes")
+    estimated_delivery_time = models.IntegerField(default=180, help_text="Estimated delivery time in minutes")
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
