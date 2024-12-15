@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from main import views
+from main.api_views import LogoutView
 from rest_framework.routers import DefaultRouter
 from main.api_views import ItemViewSet, CustomerProfileViewSet, SubscriptionViewSet, DeliveryStatusViewSet
 from rest_framework.authtoken.views import ObtainAuthToken #add this line
