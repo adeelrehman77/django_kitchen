@@ -73,20 +73,32 @@ class CustomerProfileAdmin(admin.ModelAdmin):
             reader = csv.DictReader(decoded_file)
             
             for row in reader:
-                user = User.objects.create_user(
-                    username=row['username'],
-                    email=row.get('email', ''),
-                    first_name=row.get('first_name', ''),
-                    last_name=row.get('last_name', '')
-                )
-                CustomerProfile.objects.create(
-                    user=user,
-                    phone=row.get('phone', ''),
-                    building_name=row.get('building_name', 'Not Specified'),
-                    floor_number=row.get('floor_number', '0'),
-                    flat_number=row.get('flat_number', '0')
-                )
-            self.message_user(request, "Your CSV file has been imported")
+                # Generate username from email or phone if username not provided
+                username = (row.get('username') or 
+                          row.get('email', '').split('@')[0] or 
+                          f"user_{row.get('phone', '')}")
+                
+                # Create user with generated username
+                try:
+                    user = User.objects.create_user(
+                        username=username,
+                        email=row.get('email', ''),
+                        first_name=row.get('first_name', ''),
+                        last_name=row.get('last_name', '')
+                    )
+                    
+                    CustomerProfile.objects.create(
+                        user=user,
+                        phone=row.get('phone', ''),
+                        building_name=row.get('building_name', 'Not Specified'),
+                        floor_number=row.get('floor_number', '0'),
+                        flat_number=row.get('flat_number', '0')
+                    )
+                except Exception as e:
+                    self.message_user(request, f"Error importing row: {str(e)}", level='ERROR')
+                    continue
+                    
+            self.message_user(request, "CSV file has been imported")
             return redirect("..")
         return render(request, 'admin/csv_form.html')
 
