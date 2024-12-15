@@ -44,13 +44,74 @@ class TimeSlotAdmin(admin.ModelAdmin):
         return obj.get_name_display()
     get_slot_name.short_description = 'Slot Name'
 
+from django.http import HttpResponse
+import csv
+from django.contrib.auth.models import User
+
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone', 'zone', 'route', 'building_name', 'active_subscription', 'get_subscription_stats', 'get_delivery_stats')
     list_filter = ('zone', 'route', 'subscription__payment_mode')
     search_fields = ('user__username', 'phone', 'building_name', 'flat_number')
     raw_id_fields = ('user',)
-    actions = ['download_customer_report']
+    actions = ['download_customer_report', 'export_as_csv']
+    change_list_template = 'admin/customer_profile_changelist.html'
+
+    def get_urls(self):
+        from django.urls import path
+        urls = super().get_urls()
+        custom_urls = [
+            path('import-csv/', self.import_csv, name='customer-import-csv'),
+        ]
+        return custom_urls + urls
+
+    def import_csv(self, request):
+        if request.method == "POST" and request.FILES.get('csv_file'):
+            csv_file = request.FILES["csv_file"]
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+            
+            for row in reader:
+                user = User.objects.create_user(
+                    username=row['username'],
+                    email=row.get('email', ''),
+                    first_name=row.get('first_name', ''),
+                    last_name=row.get('last_name', '')
+                )
+                CustomerProfile.objects.create(
+                    user=user,
+                    phone=row.get('phone', ''),
+                    building_name=row.get('building_name', 'Not Specified'),
+                    floor_number=row.get('floor_number', '0'),
+                    flat_number=row.get('flat_number', '0')
+                )
+            self.message_user(request, "Your CSV file has been imported")
+            return redirect("..")
+        return render(request, 'admin/csv_form.html')
+
+    def export_as_csv(self, request, queryset):
+        meta = self.model._meta
+        field_names = ['username', 'email', 'first_name', 'last_name', 'phone', 'building_name', 'floor_number', 'flat_number']
+        
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=customer_profiles.csv'
+        writer = csv.writer(response)
+        writer.writerow(field_names)
+        
+        for obj in queryset:
+            row = [
+                obj.user.username,
+                obj.user.email,
+                obj.user.first_name,
+                obj.user.last_name,
+                obj.phone,
+                obj.building_name,
+                obj.floor_number,
+                obj.flat_number
+            ]
+            writer.writerow(row)
+        return response
+    export_as_csv.short_description = "Export Selected as CSV"
 
     def get_subscription_stats(self, obj):
         total_subs = obj.subscription_set.count()
