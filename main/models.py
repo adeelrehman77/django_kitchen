@@ -37,6 +37,8 @@ class TimeSlot(models.Model):
     ]
     name = models.CharField(max_length=50, choices=SLOT_CHOICES, default='custom')
     custom_name = models.CharField(max_length=50, blank=True, null=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
 
 class MenuItemQuantity(models.Model):
     menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
@@ -48,9 +50,6 @@ class MenuItemQuantity(models.Model):
     
     def __str__(self):
         return f"{self.menu.name} - {self.item.name} (Qty: {self.quantity})"
-
-    start_time = models.TimeField()
-    end_time = models.TimeField()
     
     def clean(self):
         from django.core.exceptions import ValidationError
