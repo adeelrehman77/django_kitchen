@@ -22,7 +22,7 @@ class Item(models.Model):
 
 class MenuList(models.Model):
     name = models.CharField(max_length=100)
-    items = models.ManyToManyField(Item)
+    items = models.ManyToManyField(Item, through='MenuItemQuantity')
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
@@ -37,6 +37,18 @@ class TimeSlot(models.Model):
     ]
     name = models.CharField(max_length=50, choices=SLOT_CHOICES, default='custom')
     custom_name = models.CharField(max_length=50, blank=True, null=True)
+
+class MenuItemQuantity(models.Model):
+    menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ['menu', 'item']
+    
+    def __str__(self):
+        return f"{self.menu.name} - {self.item.name} (Qty: {self.quantity})"
+
     start_time = models.TimeField()
     end_time = models.TimeField()
     

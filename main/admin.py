@@ -29,10 +29,14 @@ class ItemAdmin(admin.ModelAdmin):
         return "No Image"
     image_preview.short_description = 'Image'
 
+class MenuItemQuantityInline(admin.TabularInline):
+    model = MenuItemQuantity
+    extra = 1
+
 @admin.register(MenuList)
 class MenuListAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active')
-    filter_horizontal = ('items',)
+    inlines = [MenuItemQuantityInline]
 
 @admin.register(TimeSlot)
 class TimeSlotAdmin(admin.ModelAdmin):
