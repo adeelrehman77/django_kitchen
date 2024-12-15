@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('api/login/', ObtainAuthToken.as_view()), #modified this line
-    path('api/logout/', views.logout), #modified this line
+    path('api/logout/', views.LogoutView.as_view()), #modified this line
     path('admin/', admin.site.urls),
     path('wallet/topup/', views.wallet_topup, name='wallet_topup'),
     path('wallet/transactions/', views.transaction_history, name='transaction_history'),
