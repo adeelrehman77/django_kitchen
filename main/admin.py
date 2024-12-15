@@ -74,11 +74,18 @@ class CustomerProfileAdmin(admin.ModelAdmin):
             
             for row in reader:
                 # Generate username from email or phone if username not provided
-                username = (row.get('username') or 
-                          row.get('email', '').split('@')[0] or 
-                          f"user_{row.get('phone', '')}")
+                base_username = (row.get('username') or 
+                               row.get('email', '').split('@')[0] or 
+                               f"user_{row.get('phone', '')}")
                 
-                # Create user with generated username
+                # Handle duplicate usernames
+                username = base_username
+                counter = 1
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}_{counter}"
+                    counter += 1
+                
+                # Create user with unique username
                 try:
                     user = User.objects.create_user(
                         username=username,
