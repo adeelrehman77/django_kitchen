@@ -90,7 +90,7 @@ class CustomerProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'menu', 'start_date', 'end_date', 'payment_mode', 'status', 'get_selected_days', 'get_delivery_stats')
+    list_display = ('customer', 'start_date', 'end_date', 'payment_mode', 'status', 'get_selected_days', 'get_delivery_stats')
     list_filter = ('payment_mode', 'time_slot', 'start_date', 'end_date', 'status')
     actions = ['approve_subscriptions', 'reject_subscriptions']
 
@@ -101,7 +101,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     def reject_subscriptions(self, request, queryset):
         queryset.update(status='rejected')
     reject_subscriptions.short_description = "Reject selected subscriptions"
-    search_fields = ('customer__user__username', 'menu__name')
+    search_fields = ('customer__user__username',)
 
     def get_selected_days(self, obj):
         days = {
@@ -121,9 +121,9 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(DeliveryStatus)
 class DeliveryStatusAdmin(admin.ModelAdmin):
-    list_display = ('subscription', 'date', 'status', 'customer_name', 'menu_name')
-    list_filter = ('status', 'date', 'subscription__menu', 'subscription__customer__zone', 'subscription__customer__route')
-    search_fields = ('subscription__customer__user__username', 'subscription__menu__name')
+    list_display = ('subscription', 'date', 'status', 'customer_name')
+    list_filter = ('status', 'date', 'subscription__customer__zone', 'subscription__customer__route')
+    search_fields = ('subscription__customer__user__username',)
     date_hierarchy = 'date'
     actions = ['mark_as_delivered', 'mark_as_cancelled']
 
@@ -145,9 +145,6 @@ class DeliveryStatusAdmin(admin.ModelAdmin):
         return obj.subscription.customer.user.username
     customer_name.short_description = 'Customer'
 
-    def menu_name(self, obj):
-        return obj.subscription.menu.name
-    menu_name.short_description = 'Menu'
 
 
 @admin.register(WalletTransaction)
