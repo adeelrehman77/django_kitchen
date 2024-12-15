@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'main',
     'delivery',
     'import_export',
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #Added CorsMiddleware
 ]
 
 # Only use clickjacking protection in deployments because the Development Web View uses 
@@ -134,3 +136,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/profile/'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
+CORS_ALLOW_CREDENTIALS = True
