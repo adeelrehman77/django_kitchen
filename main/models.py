@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
@@ -28,6 +29,17 @@ class MenuList(models.Model):
     def __str__(self):
         return self.name
 
+class MenuItemQuantity(models.Model):
+    menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        unique_together = ['menu', 'item']
+    
+    def __str__(self):
+        return f"{self.menu.name} - {self.item.name} (Qty: {self.quantity})"
+
 class TimeSlot(models.Model):
     SLOT_CHOICES = [
         ('breakfast', 'Breakfast'),
@@ -42,26 +54,14 @@ class TimeSlot(models.Model):
 
     def clean(self):
         from django.core.exceptions import ValidationError
-        
         if not self.start_time or not self.end_time:
             raise ValidationError('Both start time and end time are required.')
-            
         if self.start_time >= self.end_time:
             raise ValidationError('End time must be after start time')
-            
         if self.name == 'custom' and not self.custom_name:
             raise ValidationError('Custom name is required for custom time slots')
 
-class MenuItemQuantity(models.Model):
-    menu = models.ForeignKey(MenuList, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
-    class Meta:
-        unique_together = ['menu', 'item']
-    
     def __str__(self):
-        return f"{self.menu.name} - {self.item.name} (Qty: {self.quantity})"
         if self.name == 'custom' and self.custom_name:
             return f"{self.custom_name}: {self.start_time} - {self.end_time}"
         return f"{self.get_name_display()}: {self.start_time} - {self.end_time}"
