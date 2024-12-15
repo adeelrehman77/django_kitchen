@@ -67,52 +67,89 @@ class CustomerProfileAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def import_csv(self, request):
-        if request.method == "POST" and request.FILES.get('csv_file'):
+        if request.method == "POST":
+            if not request.FILES.get('csv_file'):
+                self.message_user(request, "No CSV file uploaded", level='ERROR')
+                return render(request, 'admin/csv_form.html')
+
             csv_file = request.FILES["csv_file"]
-            decoded_file = csv_file.read().decode('utf-8').splitlines()
-            reader = csv.DictReader(decoded_file)
+            if not csv_file.name.endswith('.csv'):
+                self.message_user(request, "Uploaded file is not a CSV file", level='ERROR')
+                return render(request, 'admin/csv_form.html')
+
+            try:
+                decoded_file = csv_file.read().decode('utf-8').splitlines()
+                reader = csv.DictReader(decoded_file)
+                
+                # Validate headers
+                required_fields = ['Username', 'Email', 'first_name', 'last_name', 'Phone', 'building_name', 'floor_number', 'flat_number']
+                missing_fields = [field for field in required_fields if field not in reader.fieldnames]
+                if missing_fields:
+                    self.message_user(request, f"Missing required columns: {', '.join(missing_fields)}", level='ERROR')
+                    return render(request, 'admin/csv_form.html')
+
+                success_count = 0
+                error_messages = []
+                
+                for row_num, row in enumerate(reader, start=2):  # Start from 2 to account for header row
+                    try:
+                        if not row.get('Username'):
+                            error_messages.append(f"Row {row_num}: Username is required")
+                            continue
+                            
+                        base_username = row['Username']
+                        username = base_username
+                        
+                        if User.objects.filter(username=username).exists():
+                            if request.POST.get('duplicate_action') == 'approve':
+                                username = request.POST.get('new_username')
+                            else:
+                                context = {
+                                    'duplicate_username': username,
+                                    'suggested_username': f"{base_username}_{User.objects.filter(username__startswith=base_username).count() + 1}",
+                                    'row_data': row
+                                }
+                                return render(request, 'admin/duplicate_username.html', context)
+
+                        # Create user
+                        user = User.objects.create_user(
+                            username=username,
+                            email=row.get('Email', ''),
+                            first_name=row.get('first_name', ''),
+                            last_name=row.get('last_name', '')
+                        )
+                        
+                        # Create profile
+                        CustomerProfile.objects.create(
+                            user=user,
+                            phone=row.get('Phone', ''),
+                            building_name=row.get('building_name', 'Not Specified'),
+                            floor_number=row.get('floor_number', '0'),
+                            flat_number=row.get('flat_number', '0')
+                        )
+                        success_count += 1
+                        
+                    except Exception as e:
+                        error_messages.append(f"Row {row_num}: {str(e)}")
+
+                # Show summary message
+                if success_count > 0:
+                    self.message_user(request, f"Successfully imported {success_count} customer(s)")
+                if error_messages:
+                    self.message_user(request, "Errors during import:\n" + "\n".join(error_messages), level='ERROR')
+                    return render(request, 'admin/csv_form.html')
+                    
+                return redirect("..")
+                
+            except UnicodeDecodeError:
+                self.message_user(request, "Invalid file encoding. Please ensure the file is UTF-8 encoded", level='ERROR')
+            except csv.Error as e:
+                self.message_user(request, f"Invalid CSV format: {str(e)}", level='ERROR')
+            except Exception as e:
+                self.message_user(request, f"An unexpected error occurred: {str(e)}", level='ERROR')
+                
+            return render(request, 'admin/csv_form.html')
             
-            for row in reader:
-                base_username = (row.get('username') or 
-                               row.get('email', '').split('@')[0] or 
-                               f"user_{row.get('phone', '')}")
-                
-                username = base_username
-                if User.objects.filter(username=username).exists():
-                    if request.POST.get('duplicate_action') == 'approve':
-                        # Admin approved a specific username
-                        username = request.POST.get('new_username')
-                    else:
-                        # Show approval form for duplicate username
-                        context = {
-                            'duplicate_username': username,
-                            'suggested_username': f"{base_username}_{User.objects.filter(username__startswith=base_username).count() + 1}",
-                            'row_data': row
-                        }
-                        return render(request, 'admin/duplicate_username.html', context)
-                
-                # Create user with approved or non-duplicate username
-                try:
-                    user = User.objects.create_user(
-                        username=username,
-                        email=row.get('email', ''),
-                        first_name=row.get('first_name', ''),
-                        last_name=row.get('last_name', '')
-                    )
-                    
-                    CustomerProfile.objects.create(
-                        user=user,
-                        phone=row.get('phone', ''),
-                        building_name=row.get('building_name', 'Not Specified'),
-                        floor_number=row.get('floor_number', '0'),
-                        flat_number=row.get('flat_number', '0')
-                    )
-                except Exception as e:
-                    self.message_user(request, f"Error importing row: {str(e)}", level='ERROR')
-                    continue
-                    
-            self.message_user(request, "CSV file has been imported")
-            return redirect("..")
         return render(request, 'admin/csv_form.html')
 
     def export_as_csv(self, request, queryset):
