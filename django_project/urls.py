@@ -1,11 +1,21 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from main import views
+from rest_framework.routers import DefaultRouter
+from main.api_views import ItemViewSet, CustomerProfileViewSet, SubscriptionViewSet, DeliveryStatusViewSet
+
+router = DefaultRouter()
+router.register(r'items', ItemViewSet)
+router.register(r'profile', CustomerProfileViewSet, basename='profile')
+router.register(r'subscriptions', SubscriptionViewSet, basename='subscription')
+router.register(r'delivery-status', DeliveryStatusViewSet, basename='delivery-status')
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
     path('wallet/topup/', views.wallet_topup, name='wallet_topup'),
     path('wallet/transactions/', views.transaction_history, name='transaction_history'),

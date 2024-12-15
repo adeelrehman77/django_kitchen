@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'main',
     'delivery',
     'import_export',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
