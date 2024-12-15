@@ -85,16 +85,29 @@ class CustomerProfileAdmin(admin.ModelAdmin):
                 required_fields = ['Username', 'Email', 'first_name', 'last_name', 'Phone', 'building_name', 'floor_number', 'flat_number']
                 missing_fields = [field for field in required_fields if field not in reader.fieldnames]
                 if missing_fields:
-                    self.message_user(request, f"Missing required columns: {', '.join(missing_fields)}", level='ERROR')
+                    self.message_user(request, f"File format error: Missing required columns in CSV header: {', '.join(missing_fields)}\nExpected columns: {', '.join(required_fields)}", level='ERROR')
                     return render(request, 'admin/csv_form.html')
 
                 success_count = 0
                 error_messages = []
                 
                 for row_num, row in enumerate(reader, start=2):  # Start from 2 to account for header row
+                    # Validate required fields
+                    for field in required_fields:
+                        if not row.get(field):
+                            error_messages.append(f"Row {row_num}: Empty value in required column '{field}'")
+                            continue
+
                     try:
-                        if not row.get('Username'):
-                            error_messages.append(f"Row {row_num}: Username is required")
+                        # Additional data validation
+                        if not row.get('Email', '').strip():
+                            error_messages.append(f"Row {row_num}: Email address is empty")
+                            continue
+                        if not row.get('Phone', '').strip():
+                            error_messages.append(f"Row {row_num}: Phone number is empty")
+                            continue
+                        if not row.get('building_name', '').strip():
+                            error_messages.append(f"Row {row_num}: Building name is empty")
                             continue
                             
                         base_username = row['Username']
