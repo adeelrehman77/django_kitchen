@@ -316,11 +316,13 @@ def delivery_summary(request):
     ).annotate(count=Count('id'))
     
     context = {
-        'today': today,
+        'selected_date': selected_date,
         'product_summary': product_summary,
         'status_summary': status_summary,
         'time_slot_summary': time_slot_summary,
-        'total_deliveries': deliveries.count()
+        'total_deliveries': deliveries.count(),
+        'categories': Category.objects.all(),
+        'routes': Route.objects.all()
     }
     
     return render(request, 'main/delivery_summary.html', context)
