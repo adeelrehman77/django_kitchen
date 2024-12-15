@@ -3,8 +3,50 @@
 
 {% block content %}
 <div class="delivery-summary">
-    <h2>Delivery Summary for {{ today|date:"D j M Y" }}</h2>
+    <h2>Delivery Summary</h2>
     
+    <!-- Filters -->
+    <div class="filters-section">
+        <form method="get" class="filters-form">
+            <div class="filter-group">
+                <label>Date:</label>
+                <input type="date" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            </div>
+            
+            <div class="filter-group">
+                <label>Category:</label>
+                <select name="category">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.name }}" {% if category == cat.name %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>Route:</label>
+                <select name="route">
+                    <option value="">All Routes</option>
+                    {% for r in routes %}
+                    <option value="{{ r.id }}" {% if route == r.id %}selected{% endif %}>
+                        {{ r.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-filter">Apply Filters</button>
+        </form>
+        
+        <!-- Export buttons -->
+        <div class="export-section">
+            <a href="?{{ request.GET.urlencode }}&export=excel" class="btn-export">Export to Excel</a>
+            <button onclick="window.print()" class="btn-print">Print</button>
+        </div>
+    </div>
+
     <div class="summary-cards">
         <div class="card">
             <h3>Product Summary</h3>

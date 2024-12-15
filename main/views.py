@@ -265,12 +265,27 @@ from django.utils import timezone
 
 @login_required
 def delivery_summary(request):
-    today = timezone.now().date()
+    # Get filter parameters
+    selected_date = request.GET.get('date', timezone.now().date())
+    if isinstance(selected_date, str):
+        selected_date = datetime.datetime.strptime(selected_date, '%Y-%m-%d').date()
     
-    # Get all deliveries for today
-    deliveries = DeliveryStatus.objects.filter(
-        date=today
-    ).select_related('subscription').prefetch_related('subscription__items')
+    category = request.GET.get('category')
+    route = request.GET.get('route')
+    
+    # Base query
+    deliveries = DeliveryStatus.objects.select_related(
+        'subscription', 'subscription__customer', 'subscription__customer__route'
+    ).prefetch_related('subscription__items')
+    
+    # Apply filters
+    deliveries = deliveries.filter(date=selected_date)
+    
+    if category:
+        deliveries = deliveries.filter(subscription__items__category__name=category)
+    
+    if route:
+        deliveries = deliveries.filter(subscription__customer__route_id=route)
     
     # Get product summary
     product_summary = []
