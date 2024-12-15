@@ -230,6 +230,25 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('customer', 'start_date', 'end_date', 'payment_mode', 'status', 'get_selected_days', 'get_delivery_stats')
     list_filter = ('payment_mode', 'time_slot', 'start_date', 'end_date', 'status')
     actions = ['approve_subscriptions', 'reject_subscriptions']
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if 'selected_days' in form.base_fields:
+            form.base_fields['selected_days'] = forms.MultipleChoiceField(
+                choices=[
+                    ('0', 'Monday'),
+                    ('1', 'Tuesday'),
+                    ('2', 'Wednesday'),
+                    ('3', 'Thursday'),
+                    ('4', 'Friday'),
+                    ('5', 'Saturday'),
+                    ('6', 'Sunday'),
+                ],
+                widget=forms.CheckboxSelectMultiple,
+                required=True,
+                help_text='Select at least one delivery day'
+            )
+        return form
 
     def approve_subscriptions(self, request, queryset):
         queryset.update(status='approved')
