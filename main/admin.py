@@ -45,6 +45,7 @@ class TimeSlotAdmin(admin.ModelAdmin):
     get_slot_name.short_description = 'Slot Name'
 
 from django.http import HttpResponse
+from django.shortcuts import render, redirect
 import csv
 from django.contrib.auth.models import User
 
