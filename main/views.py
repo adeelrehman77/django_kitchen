@@ -46,6 +46,12 @@ class SubscriptionForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['menu'].queryset = MenuList.objects.filter(is_active=True)
+        self.fields['menu'].widget.attrs.update({'class': 'form-control'})
+        self.fields['menu'].empty_label = None
 
     class Meta:
         model = Subscription

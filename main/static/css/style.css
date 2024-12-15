@@ -470,6 +470,24 @@ nav a {
     border: none;
     cursor: pointer;
 }
+
+.menu-selection {
+    margin: 10px 0;
+}
+
+.menu-selection select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#menu-preview {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
 .item-image {
     width: 200px;
     height: 200px;

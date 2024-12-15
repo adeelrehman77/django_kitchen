@@ -6,8 +6,15 @@
 <form method="post" class="subscription-form">
     {% csrf_token %}
     <div class="form-group">
-        <label>Items:</label>
-        {{ form.menu }}
+        <label>Select Menu Package:</label>
+        <div class="menu-selection">
+            {{ form.menu }}
+        </div>
+        <div id="menu-preview">
+            {% if form.menu.value %}
+                <a href="{% url 'menu_preview' form.menu.value %}" target="_blank">View Menu Details</a>
+            {% endif %}
+        </div>
     </div>
     <div class="form-group">
         <label>Start Date:</label>
