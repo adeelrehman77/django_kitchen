@@ -40,6 +40,12 @@ class SubscriptionForm(forms.ModelForm):
         ('5', 'Saturday'),
         ('6', 'Sunday'),
     ]
+
+    # Customer Information Fields (Read-only)
+    customer_name = forms.CharField(disabled=True, required=False)
+    customer_phone = forms.CharField(disabled=True, required=False)
+    customer_address = forms.CharField(disabled=True, required=False)
+    wallet_balance = forms.DecimalField(disabled=True, required=False)
     
     selected_days = forms.MultipleChoiceField(
         choices=DAYS_CHOICES,
@@ -102,6 +108,14 @@ def subscribe(request):
                 return redirect('profile')
         else:
             form = SubscriptionForm()
+            # Pre-fill customer information
+            customer = request.user.customerprofile
+            form.initial.update({
+                'customer_name': request.user.get_full_name(),
+                'customer_phone': customer.phone,
+                'customer_address': customer.full_address,
+                'wallet_balance': customer.wallet_balance
+            })
         return render(request, 'main/subscribe.html', {'form': form})
     except Exception as e:
         messages.error(request, str(e))

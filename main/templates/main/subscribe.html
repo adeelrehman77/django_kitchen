@@ -4,6 +4,28 @@
 {% block content %}
 <div class="subscription-form">
     <h2>Create New Subscription</h2>
+
+    <div class="customer-info-section">
+        <h3>Customer Information</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Name:</label>
+                {{ form.customer_name }}
+            </div>
+            <div class="info-item">
+                <label>Phone:</label>
+                {{ form.customer_phone }}
+            </div>
+            <div class="info-item">
+                <label>Address:</label>
+                {{ form.customer_address }}
+            </div>
+            <div class="info-item">
+                <label>Wallet Balance:</label>
+                <div class="balance">AED {{ form.wallet_balance.value|default:"0" }}</div>
+            </div>
+        </div>
+    </div>
     
     <form method="post">
         {% csrf_token %}
