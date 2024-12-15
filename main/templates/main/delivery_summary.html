@@ -1,0 +1,78 @@
+
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="delivery-summary">
+    <h2>Delivery Summary for {{ today|date:"D j M Y" }}</h2>
+    
+    <div class="summary-cards">
+        <div class="card">
+            <h3>Product Summary</h3>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in product_summary %}
+                    <tr>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <h3>Status Summary</h3>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for status in status_summary %}
+                    <tr>
+                        <td>{{ status.status|title }}</td>
+                        <td>{{ status.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <h3>Time Slot Summary</h3>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Time Slot</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for slot in time_slot_summary %}
+                    <tr>
+                        <td>
+                            {% if slot.subscription__time_slot__name == 'custom' %}
+                                {{ slot.subscription__time_slot__custom_name }}
+                            {% else %}
+                                {{ slot.subscription__time_slot__name|title }}
+                            {% endif %}
+                        </td>
+                        <td>{{ slot.count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

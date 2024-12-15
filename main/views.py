@@ -260,3 +260,52 @@ def subscription_report(request):
         'today': today
     }
     return render(request, 'main/subscription_report.html', context)
+from django.db.models import Count
+from django.utils import timezone
+
+@login_required
+def delivery_summary(request):
+    today = timezone.now().date()
+    
+    # Get all deliveries for today
+    deliveries = DeliveryStatus.objects.filter(
+        date=today
+    ).select_related('subscription__items')
+    
+    # Get product summary
+    product_summary = []
+    items_count = {}
+    
+    for delivery in deliveries:
+        for item in delivery.subscription.items.all():
+            if item.id not in items_count:
+                items_count[item.id] = {
+                    'name': item.name,
+                    'category': item.category.name,
+                    'count': 0
+                }
+            items_count[item.id]['count'] += 1
+    
+    # Convert to list for template
+    product_summary = list(items_count.values())
+    
+    # Get status summary
+    status_summary = deliveries.values('status').annotate(
+        count=Count('id')
+    )
+    
+    # Get time slot summary
+    time_slot_summary = deliveries.values(
+        'subscription__time_slot__name',
+        'subscription__time_slot__custom_name'
+    ).annotate(count=Count('id'))
+    
+    context = {
+        'today': today,
+        'product_summary': product_summary,
+        'status_summary': status_summary,
+        'time_slot_summary': time_slot_summary,
+        'total_deliveries': deliveries.count()
+    }
+    
+    return render(request, 'main/delivery_summary.html', context)
