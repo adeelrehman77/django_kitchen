@@ -1,0 +1,24 @@
+
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+    <div>
+        <h2>Duplicate Username Found</h2>
+        <p>The username "{{ duplicate_username }}" already exists.</p>
+        
+        <form action="." method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="duplicate_action" value="approve">
+            {% for key, value in row_data.items %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endfor %}
+            
+            <div>
+                <label for="new_username">New Username:</label>
+                <input type="text" name="new_username" value="{{ suggested_username }}" required>
+            </div>
+            <br>
+            <button type="submit">Approve & Continue Import</button>
+        </form>
+    </div>
+{% endblock %}

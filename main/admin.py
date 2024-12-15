@@ -73,19 +73,25 @@ class CustomerProfileAdmin(admin.ModelAdmin):
             reader = csv.DictReader(decoded_file)
             
             for row in reader:
-                # Generate username from email or phone if username not provided
                 base_username = (row.get('username') or 
                                row.get('email', '').split('@')[0] or 
                                f"user_{row.get('phone', '')}")
                 
-                # Handle duplicate usernames
                 username = base_username
-                counter = 1
-                while User.objects.filter(username=username).exists():
-                    username = f"{base_username}_{counter}"
-                    counter += 1
+                if User.objects.filter(username=username).exists():
+                    if request.POST.get('duplicate_action') == 'approve':
+                        # Admin approved a specific username
+                        username = request.POST.get('new_username')
+                    else:
+                        # Show approval form for duplicate username
+                        context = {
+                            'duplicate_username': username,
+                            'suggested_username': f"{base_username}_{User.objects.filter(username__startswith=base_username).count() + 1}",
+                            'row_data': row
+                        }
+                        return render(request, 'admin/duplicate_username.html', context)
                 
-                # Create user with unique username
+                # Create user with approved or non-duplicate username
                 try:
                     user = User.objects.create_user(
                         username=username,
